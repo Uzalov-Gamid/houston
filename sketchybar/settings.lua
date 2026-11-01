@@ -29,11 +29,11 @@ local ui = {
 		},
 	},
 	container = {
-		height = 27,
+		height = 28,
 		width = 38,
-		corner_radius = 7,
+		corner_radius = 9,
 		-- corner_radius = 15,
-		border_width = 1,
+		border_width = 0,
 		y_offset = -0,
 		nesting_height = 23,
 		-- nesting_corner_radius = 8,
@@ -59,13 +59,14 @@ local paddings = {
 }
 
 local sizes = {
-	icon_small = 14.0,
-	icon_medium = 15.0,
-	icon_large = 17.0,
+	icon_small = 15.0,
+	icon_medium = 16.0,
+	icon_large = 18.0,
 
-	label_small = 12.0,
-	label_medium = 13.0,
-	label_large = 14.0,
+	label_tiny = 10.0,
+	label_small = 13.0,
+	label_medium = 14.0,
+	label_large = 15.0,
 }
 
 local widgets = {

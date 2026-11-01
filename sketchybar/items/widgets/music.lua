@@ -45,11 +45,11 @@ local cover = sbar.add("item", "widgets.music.cover", {
 	drawing = false,
 	-- a fixed width counts from the item's start, paddings included:
 	-- [7pt inset][18pt cover][6pt gap to the title]
-	width = (capsule.inner - 2) + cover_bar_pt + capsule.icon_gap,
-	padding_left = capsule.inner - 2,
+	width = (capsule.inner) + cover_bar_pt + capsule.icon_gap,
+	padding_left = capsule.inner,
 	padding_right = 0,
 	-- shown instead of the image when a track has no artwork
-	icon = capsule.icon(icons.music, colors.magenta, { padding_left = 0, padding_right = 0 }),
+	icon = capsule.icon(icons.music, colors.grey, { padding_left = 0, padding_right = 0 }),
 	label = { drawing = false },
 	background = {
 		drawing = false,

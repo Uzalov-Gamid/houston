@@ -24,17 +24,21 @@ os.execute(
 	)
 )
 
--- One capsule: network status icon + keyboard layout ( 􀙇 EN ).
--- The wifi code sets the icon, the keyboard code sets the label.
+-- Network status icon. The keyboard layout label ( 􀙇 EN ) is switched off:
+-- to bring it back, restore the label below and the update_layout calls.
 local system = capsule.item("widgets.system", {
 	icon = capsule.icon(icons.wifi.connected, colors.white, {
 		font = {
 			family = settings.icon_font.family,
 			style = settings.icon_font.style,
-			size = settings.sizes.icon_medium,
+			-- the VPN glyph (wifi + lock) draws small, so this one goes above icon_large
+			size = settings.sizes.icon_large + 2,
 		},
+		padding_right = 0,
 	}),
-	label = capsule.label(keyboard_settings.default_label),
+	padding_left = 0,
+	label = { drawing = false },
+	-- label = capsule.label(keyboard_settings.default_label),
 })
 local keyboard = system
 local wifi = system
@@ -64,8 +68,8 @@ local function update_layout()
 	end)
 end
 
-keyboard:subscribe(keyboard_settings.event_name, update_layout)
-update_layout()
+-- keyboard:subscribe(keyboard_settings.event_name, update_layout)
+-- update_layout()
 
 local network_script = [[
 VPN_STATUS="OFF"
@@ -105,13 +109,13 @@ local function update_wifi()
 
 		if connection_type == "WIFI" then
 			icon = (vpn_status == "ON") and icons.wifi.vpn or icons.wifi.connected
-			color = (vpn_status == "ON") and colors.blue or colors.white
+			color = colors.white
 		elseif connection_type == "HOTSPOT" then
 			icon = icons.wifi.hotspot
-			color = (vpn_status == "ON") and colors.blue or colors.white
+			color = colors.white
 		elseif connection_type == "ETHERNET" then
 			icon = icons.wifi.ethernet
-			color = (vpn_status == "ON") and colors.blue or colors.white
+			color = colors.white
 		elseif connection_type == "NO_INTERNET" then
 			icon = icons.wifi.disconnected
 			color = colors.red
@@ -130,6 +134,6 @@ wifi:subscribe("wifi_change", update_wifi)
 -- one item can hold one callback per event, so wake refreshes both halves
 system:subscribe("system_woke", function()
 	update_wifi()
-	update_layout()
+	-- update_layout()
 end)
 sbar.exec("sleep 0.1", update_wifi)

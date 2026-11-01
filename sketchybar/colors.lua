@@ -22,11 +22,16 @@ local colors = {
 		border_color = 0x35e2e2e3,
 		blur = 12,
 	},
+	-- one plate per block: the widgets inside have no background of their own.
+	-- Opaque, so the square pieces at the screen edges merge with it seamlessly.
 	container = {
-		bg = 0x11ffffff,
+		bg = 0xff1a1a1a,
+		border_color = 0x00000000,
+		nesting_bg = 0x00000000,
+		nesting_border_color = 0x00000000,
+	},
+	popup = {
 		border_color = 0x27ffffff,
-		nesting_bg = 0x05ffffff,
-		nesting_border_color = 0x10e2e2e3,
 	},
 
 	with_alpha = function(color, alpha)

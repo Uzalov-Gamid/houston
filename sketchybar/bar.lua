@@ -7,6 +7,7 @@ sbar.bar({
 	border_color = colors.bar.border_color,
 	border_width = settings.ui.background.border_width,
 	blur_radius = colors.bar.blur,
+	-- the plate spans its items' outer paddings, so the edge gap lives here
 	padding_right = 0,
 	padding_left = 0,
 	margin = settings.ui.background.margin,

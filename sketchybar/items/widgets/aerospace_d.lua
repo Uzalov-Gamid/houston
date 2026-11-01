@@ -1,6 +1,7 @@
 local colors = require("colors")
 local settings = require("settings")
 local app_icons = require("helpers.app_icons")
+local capsule = require("helpers.capsule")
 
 -- Workspace + apps widget, one copy per display.
 --
@@ -30,8 +31,8 @@ local y_cfg = {
 	bracket_padding = 1,
 	after_space_gap = settings.paddings.paddings - 3,
 	space = {
-		padding_left = 6, -- gap after space name to edge of it's container
-		padding_right = 6,
+		padding_left = 6, -- edge piece + this = capsule.inner; gap after space name to edge of it's container
+		padding_right = 0,
 		gap = settings.paddings.group_padding - 3, -- gap between space's containers
 	},
 	apps = {
@@ -42,11 +43,20 @@ local y_cfg = {
 sbar.add("event", "aerospace_refresh")
 sbar.add("event", "aerospace_mode_change")
 
+-- square piece from the screen edge to the plate, so it seems to run on past
+-- the edge. The workspace item covers the plate's rounded corners.
 sbar.add("item", "another_edge_padding", {
 	position = "left",
+	width = settings.paddings.edge_padding,
 	icon = { drawing = false },
 	label = { drawing = false },
-	padding_left = settings.paddings.edge_padding,
+	background = {
+		color = colors.container.bg,
+		height = settings.ui.container.height,
+		corner_radius = 0,
+	},
+	padding_left = 0,
+	padding_right = 0,
 })
 
 --------------------------------------------------
@@ -99,27 +109,28 @@ local function build(suffix, display, is_main)
 			padding_right = y_cfg.space.padding_right,
 		},
 		background = {
-			height = settings.ui.container.nesting_height,
-			color = colors.container.nesting_bg,
-			corner_radius = settings.ui.container.nesting_corner_radius,
+			height = settings.ui.container.height,
+			color = colors.container.bg,
+			corner_radius = 0,
 			border_color = colors.container.nesting_border_color,
-			border_width = settings.ui.background.border_width + 1,
+			border_width = 0,
 		},
 		label = { drawing = false },
-		padding_left = y_cfg.space.gap,
-		padding_right = y_cfg.after_space_gap,
+		padding_left = 0,
+		padding_right = 0,
 	})
 
 	local aerospace_active = add_item("aerospace.active" .. suffix, {
 		position = "left",
 		icon = {
 			font = app_icon_size_medium,
-			color = colors.blue,
+			color = colors.white,
 			align = "center",
 		},
 		label = { drawing = false },
-		padding_left = 1,
-		padding_right = settings.paddings.paddings + 1,
+		-- the name and the glyph have 2pt and 1pt of empty space around them
+		padding_left = capsule.step - 2,
+		padding_right = capsule.step - 1,
 	})
 
 	local inactive_slots = {}
@@ -136,7 +147,7 @@ local function build(suffix, display, is_main)
 				align = "center",
 			},
 			drawing = false,
-			padding_right = settings.paddings.paddings,
+			padding_right = capsule.step,
 		})
 		table.insert(bracket_items, name)
 	end
