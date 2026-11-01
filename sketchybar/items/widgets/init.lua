@@ -6,15 +6,15 @@ require("items.widgets.calendar")
 
 require("items.widgets.battery")
 require("items.widgets.volume")
-require("items.widgets.cpu")
-require("items.widgets.ram")
+-- require("items.widgets.cpu")
+-- require("items.widgets.ram")
 
 -- separator("widgets.separator.2")
 
 -- require("items.widgets.keyboard")
 -- right side is built right-to-left: network ends up left of RAM,
 -- system (wifi + layout) left of network
-require("items.widgets.network")
+-- require("items.widgets.network")
 require("items.widgets.system")
 
 require("items.widgets.aerospace_d")
