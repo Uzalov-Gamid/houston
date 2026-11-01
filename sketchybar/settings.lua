@@ -11,12 +11,12 @@ local font = {
 }
 
 local ui = {
-	bar_height = 33,
-	-- MacBook Air 15" notch is 179pt wide (measured via NSScreen safe areas).
+	-- matches the notch height (NSScreen safeAreaInsets.top at 1710x1112)
+	bar_height = 38,
+	-- MacBook Air 15" notch is 209pt wide (measured via NSScreen safe areas).
 	-- Items with position "q" sit flush left of it, "e" flush right, so
 	-- nothing ends up hidden under the cut-out. A little extra = breathing room.
-	notch_width = 190,
-	-- bar_height = 38,
+	notch_width = 220,
 	background = {
 		border_width = 0,
 		corner_radius = 0,
@@ -29,13 +29,13 @@ local ui = {
 		},
 	},
 	container = {
-		height = 24,
+		height = 27,
 		width = 38,
 		corner_radius = 7,
 		-- corner_radius = 15,
 		border_width = 1,
 		y_offset = -0,
-		nesting_height = 20,
+		nesting_height = 23,
 		-- nesting_corner_radius = 8,
 		nesting_corner_radius = 5,
 	},
@@ -59,13 +59,13 @@ local paddings = {
 }
 
 local sizes = {
-	icon_small = 13.0,
-	icon_medium = 14.0,
-	icon_large = 16.0,
+	icon_small = 14.0,
+	icon_medium = 15.0,
+	icon_large = 17.0,
 
-	label_small = 11.0,
-	label_medium = 12.0,
-	label_large = 13.0,
+	label_small = 12.0,
+	label_medium = 13.0,
+	label_large = 14.0,
 }
 
 local widgets = {

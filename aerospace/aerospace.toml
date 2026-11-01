@@ -72,10 +72,10 @@ preset = 'qwerty'
 [gaps]
 inner.horizontal = 10
 inner.vertical = 10
-# The top bar (SketchyBar, 33pt) is drawn on every display, where the macOS menu
+# The top bar (SketchyBar, 38pt) is drawn on every display, where the macOS menu
 # bar would be. The MacBook screen already keeps that strip free (the notch area),
 # every other monitor needs the bar height + the usual gap.
-outer.top = [{ monitor."built-in" = 10 }, 43]
+outer.top = [{ monitor."built-in" = 10 }, 48]
 outer.left = 10
 outer.right = 10
 outer.bottom = 10
