@@ -1,0 +1,65 @@
+// Same keys as nvim/init.lua (leader = Space), plus Zed's own cmd-shortcuts.
+[
+  {
+    "context": "VimControl && !menu",
+    "bindings": {
+      "space w": "workspace::Save",
+      "space q": "pane::CloseActiveItem",
+      "space e": "project_panel::ToggleFocus",
+      "space f": "file_finder::Toggle",
+      "space g": "pane::DeploySearch",
+      "space b": "tab_switcher::Toggle",
+      "space t": "terminal_panel::ToggleFocus",
+      "space m": "markdown::OpenPreviewToTheSide",
+      "space o": ["task::Spawn", { "task_name": "Open in default app" }],
+      "space p": ["task::Spawn", { "task_name": "Quick Look" }],
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-j": "workspace::ActivatePaneDown",
+      "ctrl-k": "workspace::ActivatePaneUp",
+      "ctrl-l": "workspace::ActivatePaneRight",
+      "ctrl-d": ["workspace::SendKeystrokes", "ctrl-d z z"],
+      "ctrl-u": ["workspace::SendKeystrokes", "ctrl-u z z"]
+    }
+  },
+  {
+    "context": "vim_mode == visual",
+    "bindings": {
+      "shift-j": "editor::MoveLineDown",
+      "shift-k": "editor::MoveLineUp"
+    }
+  },
+  {
+    // same keys as nvim/lua/tree.lua
+    "context": "ProjectPanel && not_editing",
+    "bindings": {
+      "space e": "workspace::ToggleLeftDock",
+      "q": "workspace::ToggleLeftDock",
+      "ctrl-l": "workspace::ActivatePaneRight",
+      "j": "menu::SelectNext",
+      "k": "menu::SelectPrevious",
+      "l": "project_panel::ExpandSelectedEntry",
+      "o": "project_panel::Open",
+      "enter": "project_panel::Open",
+      "h": "project_panel::CollapseSelectedEntry",
+      "shift-h": "project_panel::ToggleHideHidden",
+      "shift-c": "project_panel::CollapseAllEntries",
+      "a": "project_panel::NewFile",
+      "shift-a": "project_panel::NewDirectory",
+      "r": "project_panel::Rename",
+      "d": "project_panel::Trash",
+      "y": "project_panel::Copy",
+      "x": "project_panel::Cut",
+      "p": "project_panel::Paste",
+      "shift-o": "project_panel::OpenWithSystem",
+      "space p": "project_panel::RevealInFileManager"
+    }
+  },
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-k": "workspace::ActivatePaneUp",
+      "cmd-j": "workspace::ToggleBottomDock"
+    }
+  }
+]

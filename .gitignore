@@ -51,4 +51,12 @@
 /colima/default/*
 !/colima/default/colima.yaml
 
+# Editors
+!/zed/
+/zed/*
+!/zed/settings.json
+!/zed/keymap.json
+!/zed/tasks.json
+!/zed/themes/
+
 .DS_Store

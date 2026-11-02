@@ -1,0 +1,18 @@
+// PDF / DOCX / anything Zed can't render: hand it to macOS.
+[
+  {
+    "label": "Open in default app",
+    "command": "open \"$ZED_FILE\"",
+    "reveal": "never",
+    "hide": "always",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": true
+  },
+  {
+    "label": "Quick Look",
+    "command": "qlmanage -p \"$ZED_FILE\" >/dev/null 2>&1",
+    "reveal": "never",
+    "hide": "always",
+    "allow_concurrent_runs": true
+  }
+]

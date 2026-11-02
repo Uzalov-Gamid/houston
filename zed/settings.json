@@ -1,0 +1,143 @@
+// Zed: minimal, like the terminal + Neovim.
+// Colours: themes/astronaut.json (same palette as ghostty/themes/astronaut
+// and nvim/colors/palette.lua). Font: SF Mono, heavy, like Ghostty.
+{
+  // "light" — for bright light / sun (no reflections), "dark" — evening,
+  // "system" — follow macOS appearance.
+  "theme": { "mode": "light", "light": "Astronaut Light", "dark": "Astronaut" },
+  "icon_theme": "Zed (Default)",
+
+  // ── Fonts ─────────────────────────────────────────────────────────
+  "buffer_font_family": "SF Mono",
+  "buffer_font_size": 14.5,
+  "buffer_font_weight": 700,          // Ghostty: font-style = bold
+  "buffer_line_height": { "custom": 1.5 },
+  "buffer_font_features": { "calt": false },
+  "ui_font_family": "SF Mono",
+  "ui_font_size": 17,                 // tree, tabs, menus
+  "ui_font_weight": 700,
+  "terminal": {
+    "font_family": "SF Mono",
+    "font_size": 14.5,
+    "font_weight": 700,
+    "line_height": "comfortable",
+    "cursor_shape": "block",
+    "blinking": "off",
+    "button": false,
+    "toolbar": { "breadcrumbs": false },
+    "dock": "bottom"
+  },
+
+  // ── Vim, like nvim ────────────────────────────────────────────────
+  "vim_mode": true,
+  "vim": {
+    "use_system_clipboard": "always",  // clipboard = unnamedplus
+    "use_smartcase_find": true,
+    // nvim default guicursor: block / bar in insert / underline in replace
+    "cursor_shape": {
+      "normal": "block",
+      "visual": "block",
+      "insert": "bar",
+      "replace": "underline"
+    },
+    "toggle_relative_line_numbers": false
+  },
+  "relative_line_numbers": "enabled",
+  "cursor_blink": false,
+  "cursor_shape": "block",
+  "current_line_highlight": "line",
+  "vertical_scroll_margin": 6,         // scrolloff = 6
+  "horizontal_scroll_margin": 8,
+  "soft_wrap": "none",
+  "tab_size": 4,
+  "hard_tabs": false,
+  "show_whitespaces": "trailing",      // listchars trail = ·
+  "unnecessary_code_fade": 0.5,
+  "autosave": "off",
+
+  // ── Remove the clutter ────────────────────────────────────────────
+  "toolbar": {
+    "breadcrumbs": false,
+    "quick_actions": false,
+    "selections_menu": false,
+    "agent_review": false,
+    "code_actions": false
+  },
+  "title_bar": {
+    "show_branch_name": false,
+    "show_onboarding_banner": false,
+    "show_user_picture": false,
+    "show_sign_in": false,
+    "show_menus": false
+  },
+  "tab_bar": {
+    "show": true,
+    "show_nav_history_buttons": false,
+    "show_tab_bar_buttons": false
+  },
+  "tabs": {
+    "file_icons": false,
+    "git_status": true,
+    "close_position": "right",
+    "show_close_button": "hidden",
+    "show_diagnostics": "errors"
+  },
+  "status_bar": {
+    "active_language_button": false,
+    "cursor_position_button": false
+  },
+  "gutter": {
+    "line_numbers": true,
+    "folds": false,
+    "runnables": false,
+    "breakpoints": false
+  },
+  "scrollbar": { "show": "never" },
+  "minimap": { "show": "never" },
+  "indent_guides": { "enabled": true, "coloring": "fixed" },
+  "inlay_hints": { "enabled": false },
+  "git": {
+    "inline_blame": { "enabled": false },
+    "git_gutter": "tracked_files"
+  },
+  "diagnostics": { "button": false },
+  "search": { "button": false },
+  "debugger": { "button": false },
+  "outline_panel": { "button": false },
+  "collaboration_panel": { "button": false },
+  "notification_panel": { "button": false },
+  "agent": { "button": false },
+  "show_edit_predictions": false,
+  "show_call_status_icon": false,
+
+  // ── Project tree, like lua/tree.lua (<Space>e) ───────────────────
+  "project_panel": {
+    "dock": "left",
+    "default_width": 320,
+    "button": false,
+    "file_icons": true,                  // icons on files and folders
+    "git_status": true,                  // changed files tinted, no badges
+    "git_status_indicator": false,
+    "diagnostic_badges": false,
+    "show_diagnostics": "off",
+    "entry_spacing": "comfortable",     // more air between rows
+    "indent_size": 20,
+    "indent_guides": { "show": "never" },
+    "scrollbar": { "show": "never" },
+    "sticky_scroll": false,
+    "auto_fold_dirs": true,
+    "hide_root": true,                   // the project name is already in the title bar
+    "starts_open": true,
+    "auto_reveal_entries": true,         // highlight the open file in the tree
+    "sort_mode": "directories_first"
+  },
+  "git_panel": { "button": false, "dock": "left" },
+
+  // ── Files ─────────────────────────────────────────────────────────
+  "file_scan_exclusions": [
+    "**/.git", "**/.DS_Store", "**/node_modules", "**/.venv", "**/__pycache__"
+  ],
+  "restore_on_startup": "last_session",
+  "confirm_quit": false,
+  "telemetry": { "diagnostics": false, "metrics": false }
+}
