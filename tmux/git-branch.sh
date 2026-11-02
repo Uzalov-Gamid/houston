@@ -4,4 +4,5 @@
 branch=$(git -C "$1" branch --show-current 2>/dev/null)
 [ -n "$branch" ] || branch=$(git -C "$1" rev-parse --short HEAD 2>/dev/null)
 [ -n "$branch" ] || exit 0
-printf ' #[fg=#2a1f1b bg=default]#[fg=#b5b07a bg=#2a1f1b] %s#[fg=#2a1f1b bg=default]' "$branch"
+pill=${2:-#2a1f1b} text=${3:-#b5b07a}  # colours come from the tmux theme
+printf ' #[fg=%s bg=default]#[fg=%s bg=%s] %s#[fg=%s bg=default]' "$pill" "$text" "$pill" "$branch" "$pill"

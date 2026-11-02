@@ -1,5 +1,7 @@
 # Colours: themes/astronaut (from the wallpaper). Old: theme = Gruvbox Dark
-theme = astronaut
+# astronaut-light: bright light / sun (no glare). Back to dark: theme = astronaut
+# Follow macOS appearance: theme = light:astronaut-light,dark:astronaut
+theme = astronaut-light
 cursor-style = "block"
 cursor-style-blink = false
 

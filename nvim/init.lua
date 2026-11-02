@@ -214,6 +214,12 @@ vim.api.nvim_create_autocmd("FileType", {
 
 -- ── Look ─────────────────────────────────────────────────────────────
 vim.cmd.colorscheme("palette")
+-- Neovim learns the terminal's background (dark astronaut / cream
+-- astronaut-light) a moment after start: reload the palette to match
+vim.api.nvim_create_autocmd("OptionSet", {
+  pattern = "background",
+  callback = function() vim.cmd.colorscheme("palette") end,
+})
 
 -- start screen: a small personal profile instead of the Neovim intro
 -- (lua/dashboard.lua); lua/activity.lua counts editing time for it

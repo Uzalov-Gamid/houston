@@ -8,14 +8,33 @@
 
 vim.cmd("highlight clear")
 vim.g.colors_name = "palette"
-vim.o.background = "dark"
+-- Dark or light is picked from 'background', which Neovim detects from
+-- the terminal's background colour (Ghostty astronaut / astronaut-light).
+local light = vim.o.background == "light"
 
-local c = {
+local c = light and {
+  fg = "#2a1f1b",      -- dark visor: main text
+  grey = "#76695d",    -- comments
+  dim = "#a18f80",     -- line numbers, borders
+  bg0 = "#f1ead8",     -- terminal background (text on the pills)
+  bg1 = "#e6dcc6",     -- current line, status line, popups
+  bg2 = "#d6c8ab",     -- selection
+  faint = "#c9b99c",   -- indent guides: barely visible
+  orange = "#b4541b",
+  red = "#b0381a",
+  yellow = "#876100",
+  green = "#5d6a1c",
+  blue = "#2b6b60",
+  steel = "#3d5878",
+  tan = "#87562f",
+} or {
   fg = "#e3dccb",      -- cream fur: main text
   grey = "#8f857a",    -- warm steel: comments
   dim = "#6b5a50",     -- line numbers, borders
+  bg0 = "#1c1513",     -- terminal background (text on the pills)
   bg1 = "#2a1f1b",     -- current line, status line, popups
   bg2 = "#3b2c26",     -- selection
+  faint = "#463731",   -- indent guides: barely visible
   orange = "#ef8f4c",  -- wallpaper background: spot accent
   red = "#e0603a",     -- arrow on the helmet
   yellow = "#e5c15a",  -- "YORK" sticker
@@ -46,7 +65,7 @@ hl("IncSearch", { fg = c.bg1, bg = c.orange })
 hl("CurSearch", { link = "IncSearch" })
 hl("MatchParen", { fg = c.orange, bold = true, underline = true })
 hl("NonText", { fg = c.dim })
-hl("Whitespace", { fg = "#463731" }) -- indent guides & trailing spaces: barely visible
+hl("Whitespace", { fg = c.faint }) -- indent guides & trailing spaces: barely visible
 hl("EndOfBuffer", { fg = c.bg1 })
 hl("Pmenu", { fg = c.fg, bg = c.bg1 })
 hl("PmenuSel", { fg = c.bg1, bg = c.blue, bold = true })
@@ -68,10 +87,10 @@ hl("Question", { fg = c.blue })
 -- status line pills, same look as the tmux bar (init.lua builds the line).
 -- Each pill = body group + "Cap" group for the rounded ends.
 local pills = {
-  StMode = { c.blue, "#1c1513" },        -- NORMAL (like the tmux session)
-  StModeInsert = { c.orange, "#1c1513" },
-  StModeVisual = { c.yellow, "#1c1513" },
-  StModeCommand = { c.green, "#1c1513" },
+  StMode = { c.blue, c.bg0 },        -- NORMAL (like the tmux session)
+  StModeInsert = { c.orange, c.bg0 },
+  StModeVisual = { c.yellow, c.bg0 },
+  StModeCommand = { c.green, c.bg0 },
   StFile = { c.bg2, c.fg },               -- file name (like the current window)
   StInfo = { c.bg1, c.grey },             -- filetype, position
 }
@@ -94,7 +113,7 @@ hl("TreeDir", { fg = c.blue, bold = true })
 hl("TreeFile", { fg = c.fg })
 hl("TreeHidden", { fg = c.grey })
 hl("TreeCurrent", { fg = c.orange, bold = true })
-hl("TreeGuide", { fg = "#463731" })
+hl("TreeGuide", { fg = c.faint })
 hl("TreeIconDir", { fg = c.blue })
 hl("TreeIconBlue", { fg = c.blue })
 hl("TreeIconSteel", { fg = c.steel })
@@ -117,7 +136,7 @@ hl("DashCmd", { fg = c.fg, bold = true })
 hl("DashKey", { fg = c.orange, bold = true })
 hl("DashSpark", { fg = c.blue })
 hl("DashNvim", { fg = c.yellow })
-hl("DashGh0", { fg = "#3a2c27" })                 -- no contributions
+hl("DashGh0", { fg = light and "#e0d4bc" or "#3a2c27" })                 -- no contributions
 hl("DashGh1", { fg = "#6b4430" })
 hl("DashGh2", { fg = "#a35f36" })
 hl("DashGh3", { fg = "#d97a3e" })

@@ -1,0 +1,36 @@
+# astronaut-light — the same palette for bright light / sun: cream
+# background instead of black (no mirror glare), accents darkened for
+# contrast. Same colours as zed/themes/astronaut.json ("Astronaut Light")
+# and nvim/colors/palette.lua (background=light).
+
+background = #f1ead8
+foreground = #2a1f1b
+cursor-color = #b4541b
+cursor-text = #f1ead8
+selection-background = #d6c8ab
+selection-foreground = #2a1f1b
+
+# black / bright black
+palette = 0=#2a1f1b
+palette = 8=#76695d
+# red
+palette = 1=#b0381a
+palette = 9=#c4472a
+# green
+palette = 2=#5d6a1c
+palette = 10=#6f7c2a
+# yellow
+palette = 3=#876100
+palette = 11=#9a7200
+# blue
+palette = 4=#2b6b60
+palette = 12=#3a7d71
+# magenta
+palette = 5=#87562f
+palette = 13=#9a6640
+# cyan
+palette = 6=#3d5878
+palette = 14=#4b6888
+# white
+palette = 7=#d6c8ab
+palette = 15=#e6dcc6
