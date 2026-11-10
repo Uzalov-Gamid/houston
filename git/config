@@ -17,10 +17,25 @@
 	navigate = true
 	side-by-side = false
 	line-numbers = true
-	syntax-theme = base16-256
-	dark = true
-	minus-style = syntax "#2a1c1c"
-	plus-style = syntax "#1c2a1c"
+	# astronaut-light: code colours come from the terminal's ANSI palette
+	syntax-theme = ansi
+	light = true
+	minus-style = syntax "#f0d6c8"
+	minus-emph-style = syntax "#e6b49c"
+	plus-style = syntax "#e0e4c6"
+	plus-emph-style = syntax "#c9d29c"
+	line-numbers-zero-style = "#8f8276"
+	line-numbers-minus-style = "#b0381a"
+	line-numbers-plus-style = "#5d6a1c"
+	line-numbers-left-style = "#c9b99c"
+	line-numbers-right-style = "#c9b99c"
+	file-style = "#b4541b" bold
+	file-decoration-style = "#c9b99c" ul
+	hunk-header-style = file line-number syntax
+	hunk-header-file-style = "#1f6b5c"
+	hunk-header-line-number-style = "#8c6a12"
+	hunk-header-decoration-style = "#c9b99c" box
+	commit-decoration-style = "#b4541b" box ul
 
 [merge]
 	conflictstyle = diff3
@@ -45,3 +60,12 @@
 	last = log -1 HEAD
 	lg = log --graph --oneline --decorate --all
 	amend = commit --amend --no-edit
+[user]
+	name = Uzalov-Gamid
+	email = 123296308+Uzalov-Gamid@users.noreply.github.com
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential

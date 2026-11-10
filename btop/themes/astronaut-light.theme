@@ -1,0 +1,84 @@
+# astronaut-light — btop theme from palette/astronaut-light.json
+# Cream background (taken from the terminal), ink text, orange accent.
+
+# Main background, empty = terminal background (Ghostty cream)
+theme[main_bg]=""
+
+# Main text color (ink)
+theme[main_fg]="#2a1f1b"
+
+# Title color for boxes (espresso)
+theme[title]="#3b2c26"
+
+# Highlight color for keyboard shortcuts (ember)
+theme[hi_fg]="#b4541b"
+
+# Background / foreground of selected items (sand / ink)
+theme[selected_bg]="#d6c8ab"
+theme[selected_fg]="#2a1f1b"
+
+# Inactive/disabled text (ash)
+theme[inactive_fg]="#8f8276"
+
+# Text on graphs (stone)
+theme[graph_text]="#6e6155"
+
+# Background of empty meters (linen)
+theme[meter_bg]="#e6dcc6"
+
+# Misc colors for processes box: mini cpu graphs, details memory graph, details status text (emerald)
+theme[proc_misc]="#1f6b5c"
+
+# Box outlines
+theme[cpu_box]="#b4541b"
+theme[mem_box]="#1f6b5c"
+theme[net_box]="#24578f"
+theme[proc_box]="#87562f"
+
+# Box divider lines and small boxes (dune)
+theme[div_line]="#c9b99c"
+
+# Temperature graph: olive -> mustard -> rust
+theme[temp_start]="#5d6a1c"
+theme[temp_mid]="#765500"
+theme[temp_end]="#b0381a"
+
+# CPU graph: emerald -> ember -> rust
+theme[cpu_start]="#1f6b5c"
+theme[cpu_mid]="#b4541b"
+theme[cpu_end]="#b0381a"
+
+# Mem/Disk free meter
+theme[free_start]="#7daea3"
+theme[free_mid]=""
+theme[free_end]="#1f6b5c"
+
+# Mem/Disk cached meter
+theme[cached_start]="#c9dbe8"
+theme[cached_mid]=""
+theme[cached_end]="#24578f"
+
+# Mem/Disk available meter
+theme[available_start]="#f2dc8f"
+theme[available_mid]=""
+theme[available_end]="#8c6a12"
+
+# Mem/Disk used meter
+theme[used_start]="#f0c9a0"
+theme[used_mid]="#e08a4c"
+theme[used_end]="#b0381a"
+
+# Download graph: mist -> sky -> navy
+theme[download_start]="#c9dbe8"
+theme[download_mid]="#2f64a0"
+theme[download_end]="#1e3a5f"
+
+# Upload graph: peach -> flame -> ember
+theme[upload_start]="#f0c9a0"
+theme[upload_mid]="#e08a4c"
+theme[upload_end]="#b4541b"
+
+# Process box cpu/mem gradient
+theme[process_start]="#1f6b5c"
+theme[process_mid]="#b4541b"
+theme[process_end]="#b0381a"

@@ -17,7 +17,9 @@
   "ui_font_size": 17,                 // tree, tabs, menus
   "ui_font_weight": 700,
   "terminal": {
+    "shell": { "program": "/opt/homebrew/bin/fish" },
     "font_family": "SF Mono",
+    "font_fallbacks": ["Symbols Nerd Font Mono"],  // icons for tide, lsd, fifc
     "font_size": 14.5,
     "font_weight": 700,
     "line_height": "comfortable",
@@ -112,6 +114,7 @@
 
   // ── Project tree, like lua/tree.lua (<Space>e) ───────────────────
   "project_panel": {
+    "hide_hidden": false,
     "dock": "left",
     "default_width": 320,
     "button": false,
@@ -125,7 +128,7 @@
     "indent_guides": { "show": "never" },
     "scrollbar": { "show": "never" },
     "sticky_scroll": false,
-    "auto_fold_dirs": true,
+    "auto_fold_dirs": false,            // docs/images -> separate nested folders
     "hide_root": true,                   // the project name is already in the title bar
     "starts_open": true,
     "auto_reveal_entries": true,         // highlight the open file in the tree

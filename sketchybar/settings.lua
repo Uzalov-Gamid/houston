@@ -1,6 +1,6 @@
 local font = {
-	text = "SF Pro Rounded",
-	numbers = "SF Pro Rounded",
+	text = "SF Mono",
+	numbers = "SF Mono",
 	style_map = {
 		["Regular"] = "Regular",
 		["Semibold"] = "Semibold",

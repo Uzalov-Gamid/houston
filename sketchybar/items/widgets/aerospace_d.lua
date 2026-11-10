@@ -102,7 +102,8 @@ local function build(suffix, display, is_main)
 	local aerospace_workspace = add_item("aerospace.ws" .. suffix, {
 		position = "left",
 		icon = {
-			font = settings.label_font,
+			-- workspace name one step heavier than the other labels
+			font = { family = settings.font.text, style = settings.font.style_map["Heavy"], size = settings.sizes.label_medium },
 			color = colors.white,
 			align = "center",
 			padding_left = y_cfg.space.padding_left,

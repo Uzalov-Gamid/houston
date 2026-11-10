@@ -1,18 +1,20 @@
 local settings = require("settings")
 
--- gruvbox:
+-- astronaut: the bar is black (it hides the notch), so it uses the dark
+-- colours from Obsidian's code blocks (palette/obsidian-colors.md, §2):
+-- cream text, aqua glow for "active", ember-orange, gold, olive, tan.
 
 local colors = {
-	black = 0xff1d2021,
-	white = 0xffd4be98,
+	black = 0xff1c1513, -- night
+	white = 0xffe3dccb, -- cream text on dark
 
-	red = 0xfffb4834,
-	green = 0xffa9b665,
-	blue = 0xff7daea3,
-	yellow = 0xffd8a657,
-	orange = 0xffe78a4e,
-	magenta = 0xffd3869b,
-	grey = 0xff928374,
+	red = 0xfff07a52,
+	green = 0xffb5b07a,
+	blue = 0xff7daea3, -- glow: the window border colour
+	yellow = 0xffe5c15a,
+	orange = 0xffef8f4c,
+	magenta = 0xffd0a07e, -- no purple in the palette: warm tan
+	grey = 0xff8f857a,
 
 	transparent = 0xffffffff,
 
@@ -25,7 +27,8 @@ local colors = {
 	-- one plate per block: the widgets inside have no background of their own.
 	-- Opaque, so the square pieces at the screen edges merge with it seamlessly.
 	container = {
-		bg = 0xff1a1a1a,
+		-- no plates: icons and text sit straight on the bar (was 0xff1a1a1a)
+		bg = 0x00000000,
 		border_color = 0x00000000,
 		nesting_bg = 0x00000000,
 		nesting_border_color = 0x00000000,

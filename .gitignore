@@ -11,6 +11,8 @@
 !/python/
 !/cursor/
 !/screenshots/
+!/CHANGELOG.md
+!/palette/
 
 # Window management & menu bar
 !/aerospace/
@@ -24,7 +26,8 @@
 /fish/fish_variables
 /fish/functions/
 /fish/completions/
-/fish/conf.d/
+/fish/conf.d/*
+!/fish/conf.d/prompt.fish
 !/zsh/
 /zsh/.zcompdump*
 /zsh/.zsh_sessions/
@@ -60,3 +63,8 @@
 !/zed/themes/
 
 .DS_Store
+
+# local backups made before edits (name.bak, name.bak-2026-11-10, …)
+*.bak
+*.bak-*
+*.before-*

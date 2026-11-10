@@ -1,5 +1,6 @@
 # style name or JSON path (default "auto")
-style: "~/.config/glow/astronaut.json"
+# light terminal (Ghostty astronaut-light); dark: ~/.config/glow/astronaut.json
+style: "~/.config/glow/astronaut-light.json"
 # mouse support (TUI-mode only)
 mouse: false
 # use pager to display markdown

@@ -32,19 +32,19 @@
     "color": "#ef8f4c"
   },
   "h3": {
-    "prefix": "### ",
+    "prefix": "▸ ",
     "color": "#7daea3"
   },
   "h4": {
-    "prefix": "#### ",
+    "prefix": "▹ ",
     "color": "#8aa1b8"
   },
   "h5": {
-    "prefix": "##### ",
+    "prefix": "· ",
     "color": "#8aa1b8"
   },
   "h6": {
-    "prefix": "###### ",
+    "prefix": "· ",
     "color": "#8f857a",
     "bold": false
   },

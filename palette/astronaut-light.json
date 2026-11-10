@@ -1,0 +1,55 @@
+{
+  "name": "astronaut-light",
+  "description": "Cream base, ink text, orange accent; emerald, navy, sky, gold and greys for variety. Contrast is measured against cream (#f1ead8).",
+  "base": {
+    "paper":    { "hex": "#f8f1e3", "role": "raised surfaces: cards, popups, the note page" },
+    "cream":    { "hex": "#f1ead8", "role": "main background (Ghostty, tmux, Arc, Obsidian)" },
+    "linen":    { "hex": "#e6dcc6", "role": "panels, sidebars, current line, inline code" },
+    "sand":     { "hex": "#d6c8ab", "role": "selection, active pill, borders" },
+    "dune":     { "hex": "#c9b99c", "role": "faint lines: indent guides, dividers" }
+  },
+  "ink": {
+    "ink":      { "hex": "#2a1f1b", "contrast": 13.4, "role": "main text" },
+    "espresso": { "hex": "#3b2c26", "contrast": 11.1, "role": "headings, bold" },
+    "night":    { "hex": "#1c1513", "role": "dark blocks on cream: code cards, header bars (cream text on it: 15:1)" }
+  },
+  "grey": {
+    "stone":    { "hex": "#6e6155", "contrast": 5.0, "role": "muted text, comments, meta" },
+    "slate":    { "hex": "#56616b", "contrast": 5.3, "role": "cool grey: properties, timestamps" },
+    "ash":      { "hex": "#8f8276", "contrast": 3.1, "role": "faint: placeholders, line numbers (not body text)" }
+  },
+  "orange": {
+    "ember":    { "hex": "#b4541b", "contrast": 4.1, "role": "main accent: cursor, buttons, headings, icons" },
+    "flame":    { "hex": "#e08a4c", "role": "wallpaper orange: decoration, graph nodes, progress" },
+    "peach":    { "hex": "#f0c9a0", "role": "soft fill: selected rows, highlights" },
+    "rust":     { "hex": "#b0381a", "contrast": 5.1, "role": "errors, deletions, escapes" }
+  },
+  "gold": {
+    "mustard":  { "hex": "#765500", "contrast": 5.7, "role": "yellow text: functions, warnings, git dirty" },
+    "gold":     { "hex": "#8c6a12", "contrast": 4.2, "role": "gilding: h3, stars, badges (large or bold only)" },
+    "brass":    { "hex": "#c49a3a", "role": "gold on dark blocks (6.9:1 on night), decorative lines" },
+    "butter":   { "hex": "#f2dc8f", "role": "highlight (==marked==) background" }
+  },
+  "green": {
+    "emerald":  { "hex": "#1f6b5c", "contrast": 5.3, "role": "links, keywords, folders, session pill" },
+    "pine":     { "hex": "#134b40", "contrast": 8.3, "role": "deep emerald: h2, active link" },
+    "glow":     { "hex": "#7daea3", "role": "aqua window glow: borders, focus rings (decoration)" },
+    "mint":     { "hex": "#cfe3d6", "role": "soft emerald fill: tags, success callouts" },
+    "olive":    { "hex": "#5d6a1c", "contrast": 4.9, "role": "strings, success, git branch" }
+  },
+  "blue": {
+    "navy":     { "hex": "#1e3a5f", "contrast": 9.6, "role": "dark blue: h1, strong emphasis, types" },
+    "blue":     { "hex": "#24578f", "contrast": 6.2, "role": "ANSI cyan, operators, tips" },
+    "sky":      { "hex": "#2f64a0", "contrast": 5.1, "role": "light blue text: external links, info" },
+    "mist":     { "hex": "#c9dbe8", "role": "soft blue fill: info callouts, blue tags" }
+  },
+  "warm": {
+    "tan":      { "hex": "#87562f", "contrast": 5.1, "role": "leather: builtins, quotes, attachments" }
+  },
+  "ansi": {
+    "0": "#2a1f1b", "1": "#b0381a", "2": "#5d6a1c", "3": "#765500",
+    "4": "#2f64a0", "5": "#87562f", "6": "#1f6b5c", "7": "#56616b",
+    "8": "#6e6155", "9": "#b4541b", "10": "#134b40", "11": "#8c6a12",
+    "12": "#1e3a5f", "13": "#3b2c26", "14": "#24578f", "15": "#8f8276"
+  }
+}

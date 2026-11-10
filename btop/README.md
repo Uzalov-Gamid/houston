@@ -1,6 +1,7 @@
 # btop — монитор процессов
 
-Конфиг: [`btop.conf`](btop.conf), тема: [`themes/gruvbox.theme`](themes/gruvbox.theme).
+Конфиг: [`btop.conf`](btop.conf), тема: [`themes/astronaut-light.theme`](themes/astronaut-light.theme)
+(тёмная — [`themes/astronaut.theme`](themes/astronaut.theme), переключение в меню `m` → Options → color theme).
 Запуск: `btop`.
 
 Показывает CPU, память, сеть и процессы (сортировка по CPU), обновление раз в 2 с.

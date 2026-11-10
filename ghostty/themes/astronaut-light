@@ -7,30 +7,31 @@ background = #f1ead8
 foreground = #2a1f1b
 cursor-color = #b4541b
 cursor-text = #f1ead8
-selection-background = #d6c8ab
+selection-background = #f1d4b9
 selection-foreground = #2a1f1b
 
 # black / bright black
 palette = 0=#2a1f1b
-palette = 8=#76695d
+palette = 8=#6e6155
 # red
 palette = 1=#b0381a
-palette = 9=#c4472a
+palette = 9=#b4541b
 # green
 palette = 2=#5d6a1c
-palette = 10=#6f7c2a
+palette = 10=#134b40
 # yellow
-palette = 3=#876100
-palette = 11=#9a7200
-# blue
-palette = 4=#2b6b60
-palette = 12=#3a7d71
-# magenta
+palette = 3=#765500
+palette = 11=#8c6a12
+# blue: sky / navy
+palette = 4=#2f64a0
+palette = 12=#1e3a5f
+# magenta: tan / espresso (no purple in the palette)
 palette = 5=#87562f
-palette = 13=#9a6640
-# cyan
-palette = 6=#3d5878
-palette = 14=#4b6888
-# white
-palette = 7=#d6c8ab
-palette = 15=#e6dcc6
+palette = 13=#3b2c26
+# cyan: emerald / blue
+palette = 6=#1f6b5c
+palette = 14=#24578f
+# white: programs print TEXT in it, so on cream it must stay readable —
+# slate and ash, not sand/linen (those disappear on the background)
+palette = 7=#56616b
+palette = 15=#8f8276

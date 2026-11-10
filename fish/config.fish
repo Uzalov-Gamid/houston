@@ -13,6 +13,10 @@ zoxide init --cmd cd fish | source
 
 fzf --fish | source
 
+# fzf colours: Obsidian roles on cream — selected row peach (like the active
+# file), matches ember, frame in the aqua window glow
+set -gx FZF_DEFAULT_OPTS "--color=bg+:#f0c9a0,fg+:#2a1f1b,gutter:-1,hl:#b0381a,hl+:#b0381a,pointer:#b4541b,marker:#b4541b,prompt:#1f6b5c,info:#6e6155,spinner:#b4541b,header:#6e6155,border:#7daea3,separator:#d6c8ab,scrollbar:#d6c8ab,query:#2a1f1b"
+
 # fzf popup on Tab (fifc plugin, listed in fish_plugins); folders preview with lsd
 # list only the current directory, not everything below it
 set -gx fifc_fd_opts --max-depth 1 --hidden
@@ -61,7 +65,7 @@ atuin init fish | source
 
 # starship init fish | source
 
-set -g fish_color_autosuggestion 585b70
+set -g fish_color_autosuggestion 8f8276
 
 set -gx EDITOR nvim
 set -gx VISUAL nvim
@@ -141,7 +145,9 @@ alias ls "lsd -lah --group-dirs first"
 alias n nvim
 abbr -a yz yazi
 # read Markdown in the terminal, astronaut colours, scrollable (q to quit)
-alias md "glow -s ~/.config/glow/astronaut.json -p"
+alias md "glow -p" # style from ~/.config/glow/glow.yml
+# open Claude with the JERY assistant skill
+alias jery "claude /jery-assistant"
 
 bind ctrl-\\ 'status test-terminal-feature scroll-content-up && commandline -f scrollback-push; commandline -f clear-screen'
 bind -M insert ctrl-\\ 'status test-terminal-feature scroll-content-up && commandline -f scrollback-push; commandline -f clear-screen'

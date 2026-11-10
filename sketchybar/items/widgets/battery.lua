@@ -18,7 +18,7 @@ local value = sbar.add("item", "widgets.battery.value", {
 	icon = { drawing = false },
 	label = {
 		string = "??",
-		font = { family = "SF Pro", style = settings.font.style_map["Heavy"], size = settings.sizes.label_tiny },
+		font = { family = settings.font.numbers, style = settings.font.style_map["Heavy"], size = settings.sizes.label_tiny },
 		color = colors.white,
 		width = glyph_width - terminal_width,
 		align = "center",
