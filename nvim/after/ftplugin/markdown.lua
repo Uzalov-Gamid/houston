@@ -11,59 +11,80 @@ vim.opt_local.expandtab = true
 vim.keymap.set("n", "j", "gj", { buffer = true })
 vim.keymap.set("n", "k", "gk", { buffer = true })
 
--- ── Preview (like Obsidian's reading view) ───────────────────────────
--- <leader>p swaps the editor for the rendered note in the same window,
--- full width; <leader>p (or q) again brings the editor back where the
--- cursor was. Rendered by `glow` in the astronaut colours
--- (~/.config/glow/astronaut.json). Scroll with j/k, Ctrl-d/u, gg/G.
-local src = vim.api.nvim_get_current_buf()
-local style = vim.fn.expand("~/.config/glow/astronaut.json")
+-- ── Obsidian extras in the editor ────────────────────────────────────
+-- Tree-sitter colours headings, lists, links and code (colors/palette.lua).
+-- What it does not know about is drawn here with extmarks: [[wiki links]],
+-- ==highlights==, #tags, plain > quotes (brass bar) and callouts
+-- > [!type] Title — an icon in front and the block's > markers in the
+-- callout's colour, like Obsidian.
+local CALLOUT = require("mdview").CALLOUT -- type → { colour family, icon }
+local ns = vim.api.nvim_create_namespace("md_obsidian")
+local buf = vim.api.nvim_get_current_buf()
 
-local function back_to_editor(preview)
-  local win = vim.api.nvim_get_current_win()
-  if vim.api.nvim_buf_is_valid(src) then
-    vim.api.nvim_win_set_buf(win, src)
-  end
-  if vim.api.nvim_buf_is_valid(preview) then
-    vim.api.nvim_buf_delete(preview, { force = true }) -- also stops glow's job
-  end
+local function mark(row, from, to, group)
+  vim.api.nvim_buf_set_extmark(buf, ns, row, from, { end_col = to, hl_group = group, priority = 150 })
 end
 
-local function show_preview()
-  if vim.bo[src].modified then
-    vim.cmd.write()
+local function decorate()
+  if not vim.api.nvim_buf_is_valid(buf) then
+    return
   end
-  local win = vim.api.nvim_get_current_win()
-  local file = vim.api.nvim_buf_get_name(src)
-  -- glow adds a 2-column margin on each side: keep lines inside the window
-  local width = math.max(vim.api.nvim_win_get_width(win) - 6, 20)
-
-  local preview = vim.api.nvim_create_buf(false, true)
-  vim.b[preview].no_insert = true -- see TermOpen in init.lua
-  vim.api.nvim_win_set_buf(win, preview)
-  -- stdin from /dev/null: otherwise glow waits for Markdown on stdin.
-  -- `tail -f /dev/null` keeps the job alive so no "[Process exited]" line.
-  local cmd = string.format("glow -s %s -w %d %s < /dev/null; exec tail -f /dev/null",
-    vim.fn.shellescape(style), width, vim.fn.shellescape(file))
-  vim.fn.jobstart({ "sh", "-c", cmd }, { term = true, env = { COLORTERM = "truecolor" } })
-  vim.bo[preview].bufhidden = "wipe"
-  vim.wo[win].wrap = false
-  vim.wo[win].cursorline = false
-
-  for _, key in ipairs({ "<leader>p", "q" }) do
-    vim.keymap.set("n", key, function()
-      back_to_editor(preview)
-    end, { buffer = preview, desc = "Back to the editor" })
-  end
-  -- start reading from the top once glow has printed
-  vim.defer_fn(function()
-    if vim.api.nvim_win_is_valid(win) and vim.api.nvim_win_get_buf(win) == preview then
-      vim.api.nvim_win_set_cursor(win, { 1, 0 })
+  vim.api.nvim_buf_clear_namespace(buf, ns, 0, -1)
+  local in_code, callout = false, nil
+  for i, line in ipairs(vim.api.nvim_buf_get_lines(buf, 0, -1, false)) do
+    local row = i - 1
+    if line:match("^%s*```") or line:match("^%s*~~~") then
+      in_code = not in_code
+    elseif not in_code then
+      -- quotes and callouts
+      local gt = line:match("^%s*()>")
+      if gt then
+        local kind, title_at = line:match("^%s*>%s*%[!(%a+)%][-+]?()")
+        if kind then
+          local spec = CALLOUT[kind:lower()] or CALLOUT.note
+          callout = spec[1]
+          local bracket = line:find("[", 1, true) - 1
+          vim.api.nvim_buf_set_extmark(buf, ns, row, bracket, {
+            virt_text = { { spec[2] .. " ", "MdCallout" .. callout } }, virt_text_pos = "inline",
+          })
+          mark(row, gt - 1, gt, "MdCallout" .. callout .. "Bar")
+          mark(row, bracket, #line, "MdCallout" .. callout)
+        else
+          mark(row, gt - 1, gt, callout and "MdCallout" .. callout .. "Bar" or "MdQuoteBar")
+        end
+      else
+        callout = nil
+      end
+      -- [[wiki links]], ==highlights==, #tags (not headings)
+      for s, e in line:gmatch("()%[%[.-%]%]()") do
+        mark(row, s - 1, e - 1, "MdWikiLink")
+      end
+      for s, e in line:gmatch("()==[^=].-==()") do
+        mark(row, s - 1, e - 1, "MdHighlight")
+      end
+      if not line:match("^#+%s") then
+        for s, e in line:gmatch("()#[^%s#%[%]%(%)%.,;:!%?\"'`=]+()") do
+          if s == 1 or line:sub(s - 1, s - 1):match("%s") then
+            mark(row, s - 1, e - 1, "MdTag")
+          end
+        end
+      end
     end
-  end, 300)
+  end
 end
 
-vim.keymap.set("n", "<leader>p", show_preview, { buffer = true, desc = "Reading view (glow)" })
+decorate()
+vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "BufWinEnter" }, {
+  buffer = buf,
+  callback = function() vim.schedule(decorate) end,
+})
+
+-- ── Reading view (like Obsidian's) ────────────────────────────────────
+-- <leader>p swaps the editor for the note drawn the Obsidian way
+-- (lua/mdview.lua): properties, headings, callouts that fold, code cards,
+-- tables, embeds, pictures. q or <leader>p — back to the same place.
+vim.keymap.set("n", "<leader>p", function() require("mdview").open() end,
+  { buffer = true, desc = "Reading view" })
 
 -- <leader>r: open the file in the default Markdown app (Obsidian)
 vim.keymap.set("n", "<leader>r", function()

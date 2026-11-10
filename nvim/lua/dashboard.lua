@@ -489,7 +489,7 @@ function M.open()
   api.nvim_win_set_buf(0, buf)
   vim.bo[buf].filetype = "dashboard"
   vim.bo[buf].bufhidden = "wipe"
-  local wo = vim.wo[0]
+  local wo = vim.wo[0][0] -- setlocal: files opened later in this window keep numbers
   wo.number, wo.relativenumber, wo.cursorline, wo.list = false, false, false, false
   wo.signcolumn, wo.colorcolumn, wo.foldcolumn = "no", "", "0"
   wo.fillchars = "eob: "

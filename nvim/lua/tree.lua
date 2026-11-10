@@ -59,7 +59,10 @@ local state = {
 
 local function icon_for(item)
   if item.dir then
-    return state.open[item.path] and ICON.dir_open or ICON.dir, "TreeIconDir"
+    if state.open[item.path] then
+      return ICON.dir_open, "TreeIconDirOpen"
+    end
+    return ICON.dir, "TreeIconDir"
   end
   local by_name = BY_NAME[item.name] or (item.name:match("^Dockerfile") and BY_NAME.Dockerfile)
   local spec = by_name or BY_EXT[(item.name:match("%.([^.]+)$") or ""):lower()]

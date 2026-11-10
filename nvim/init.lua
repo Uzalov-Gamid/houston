@@ -1,11 +1,17 @@
--- Minimal Neovim config: no plugins, no LSP, no autocompletion, no
--- error underlining, no auto-formatting — you write and check the code
--- yourself. Only things that make editing comfortable.
+-- Minimal Neovim config. No autocompletion — you write the code yourself,
+-- that is how it sticks. Language servers only check it (underline, a
+-- note on the current line) and answer questions (K, gd). A handful of
+-- plugins: git, SQL, auto-closing brackets. C is run through clang-format
+-- on save (after/ftplugin/c.lua).
 --
 --   init.lua                 — everything that applies to all files
 --   after/ftplugin/<ft>.lua  — per-language settings (indent width, how
 --                              <leader>r runs the file, …)
+--   lsp/<server>.lua         — one file per language server
+--   lua/lsp_setup.lua        — which servers run, diagnostics, LSP keys
+--   lua/plugins.lua          — the plugins (vim.pack) and their keys
 --   lua/tree.lua             — the project tree (<leader>e)
+--   lua/mdview.lua           — Markdown reading view (<leader>p)
 --   colors/palette.lua       — the colour scheme
 
 -- ── Leader ───────────────────────────────────────────────────────────
@@ -44,6 +50,7 @@ opt.updatetime = 250
 opt.termguicolors = true      -- 24-bit colours (Ghostty supports them)
 opt.showmode = false          -- the mode is shown in the status line
 opt.confirm = true            -- ask to save instead of refusing to quit
+opt.winborder = "rounded"     -- every floating window: thin rounded frame, no fill
 
 -- tabs, trailing spaces and indent guides (the "│" every indent level)
 opt.list = true
@@ -76,13 +83,41 @@ vim.filetype.add({
     tf = "terraform",         -- not TinyFugue
     tfvars = "terraform",
     j2 = "jinja",             -- Ansible / Jinja templates
+    nginx = "nginx",
+  },
+  -- compound types: YAML highlighting + the right language server on top
+  filename = {
+    ["docker-compose.yml"] = "yaml.docker-compose",
+    ["docker-compose.yaml"] = "yaml.docker-compose",
+    ["compose.yml"] = "yaml.docker-compose",
+    ["compose.yaml"] = "yaml.docker-compose",
+  },
+  pattern = {
+    [".*/nginx/.*%.conf"] = "nginx",
+    [".*/roles/.*/tasks/.*%.ya?ml"] = "yaml.ansible",
+    [".*/roles/.*/handlers/.*%.ya?ml"] = "yaml.ansible",
+    [".*/playbooks?/.*%.ya?ml"] = "yaml.ansible",
+    ["playbook.*%.ya?ml"] = "yaml.ansible",
+    -- Helm: a template inside a chart (a Chart.yaml somewhere above)
+    [".*/templates/.*%.ya?ml"] = function(path)
+      return vim.fs.find("Chart.yaml", { upward = true, path = vim.fs.dirname(path) })[1] and "helm" or nil
+    end,
+    [".*/templates/.*%.tpl"] = "helm",
   },
 })
+
+-- language servers (lsp/*.lua, lua/lsp_setup.lua) and the few plugins
+-- (lua/plugins.lua): git, SQL, auto-closing brackets
+require("lsp_setup")
+require("plugins")
 
 -- ── Keymaps ──────────────────────────────────────────────────────────
 local map = vim.keymap.set
 
-map("n", "<leader>w", "<cmd>write<cr>", { desc = "Save" })
+map("n", "<leader>w", "<cmd>silent write<cr>", { desc = "Save" })
+-- plain :w is silent too: the BufWritePost message (● file · N строк) replaces
+-- Neovim's '"file" 18L, 412B written'
+vim.cmd([[cnoreabbrev <expr> w (getcmdtype() == ':' && getcmdline() == 'w') ? 'silent w' : 'w']])
 map("n", "<leader>q", "<cmd>quit<cr>", { desc = "Quit" })
 map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
 map("n", "<leader>e", function() require("tree").toggle() end, { desc = "Project tree" })
@@ -97,11 +132,20 @@ vim.api.nvim_create_autocmd("QuickFixCmdPost", {
   command = "cwindow",
 })
 
--- move between splits with Ctrl-h/j/k/l (same keys as tmux panes)
-map("n", "<C-h>", "<C-w>h", { desc = "Window left" })
-map("n", "<C-j>", "<C-w>j", { desc = "Window down" })
-map("n", "<C-k>", "<C-w>k", { desc = "Window up" })
-map("n", "<C-l>", "<C-w>l", { desc = "Window right" })
+-- move between splits with Ctrl-h/j/k/l; at the edge of Neovim the same
+-- keys jump on to the next tmux pane (tmux side: vim-tmux-navigator)
+local function navigate(dir)
+  local win = vim.api.nvim_get_current_win()
+  vim.cmd.wincmd(dir)
+  if vim.env.TMUX and win == vim.api.nvim_get_current_win() then
+    local pane = ({ h = "L", j = "D", k = "U", l = "R" })[dir]
+    vim.fn.system({ "tmux", "select-pane", "-" .. pane })
+  end
+end
+map("n", "<C-h>", function() navigate("h") end, { desc = "Window/pane left" })
+map("n", "<C-j>", function() navigate("j") end, { desc = "Window/pane down" })
+map("n", "<C-k>", function() navigate("k") end, { desc = "Window/pane up" })
+map("n", "<C-l>", function() navigate("l") end, { desc = "Window/pane right" })
 
 -- resize the current split with Shift + arrows (Ctrl-w = makes them equal)
 map("n", "<S-Left>", "<cmd>vertical resize -4<cr>", { desc = "Narrower" })
@@ -288,6 +332,52 @@ end
 opt.statusline = "%!v:lua.statusline()"
 opt.laststatus = 3 -- one status line for all splits
 
+-- Path above the code (winbar):   project › src › ● telemetry.c ●
+-- Only for real files; the tree, terminal and reading view keep the row free.
+function _G.winbar()
+  local path = vim.fn.expand("%:~:.")
+  if path == "" then
+    return ""
+  end
+  local parts = vim.split(path, "/", { plain = true })
+  local name = table.remove(parts)
+  local icon, color = require("tree").file_icon(name)
+  -- inside the project: start from its name; elsewhere the path speaks for itself
+  local inside = not path:match("^[~/]")
+  local crumbs = { "%#WinBar# " .. (inside and vim.fn.fnamemodify(vim.fn.getcwd(), ":t") or table.remove(parts, 1)) }
+  for _, dir in ipairs(parts) do
+    crumbs[#crumbs + 1] = dir
+  end
+  local modified = vim.bo.modified and " %#WinBarModified#\u{25cf}" or ""
+  return table.concat(crumbs, " %#WinBarSep#›%#WinBar# ")
+    .. " %#WinBarSep#›%#TreeIcon" .. color .. "# " .. icon .. " %#WinBarFile#"
+    .. name:gsub("%%", "%%%%") .. modified
+end
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  callback = function(args)
+    local normal = vim.bo[args.buf].buftype == "" and vim.bo[args.buf].filetype ~= "tree"
+      and vim.api.nvim_win_get_config(0).relative == ""
+    vim.wo.winbar = normal and "%!v:lua.winbar()" or ""
+  end,
+})
+
+-- "file written" as one quiet line:   ● telemetry.c · 18 строк · 0.4 КБ
+vim.api.nvim_create_autocmd("BufWritePost", {
+  callback = function(args)
+    local size = vim.fn.getfsize(args.file)
+    local kb = size < 1024 and (size .. " Б") or string.format("%.1f КБ", size / 1024)
+    local n = vim.api.nvim_buf_line_count(args.buf)
+    local word = (n % 10 == 1 and n % 100 ~= 11) and "строка"
+      or (n % 10 >= 2 and n % 10 <= 4 and (n % 100 < 12 or n % 100 > 14)) and "строки" or "строк"
+    -- scheduled: the write itself runs under :silent (see <leader>w and :w)
+    vim.schedule(function() vim.api.nvim_echo({
+      { "\u{25cf} ", "MsgSaved" },
+      { vim.fn.fnamemodify(args.file, ":t"), "MsgSavedFile" },
+      { " · " .. n .. " " .. word .. " · " .. kb, "MsgSavedInfo" },
+    }, false, {}) end)
+  end,
+})
+
 -- No command line row at the bottom: ':' and '/' open the input only while
 -- you type, messages pop up in a small window and fade after 4 s.
 -- ui2 is Neovim 0.12's built-in (experimental) messages/cmdline UI.
@@ -295,6 +385,22 @@ opt.cmdheight = 0
 local ok_ui2, ui2 = pcall(require, "vim._core.ui2")
 if ok_ui2 then
   ui2.enable({ enable = true, msg = { targets = "msg", msg = { timeout = 4000 } } })
+
+  -- Messages in the top-right corner, right under the tmux pills (ui2 puts
+  -- them bottom-right above the status line). Wraps ui2's positioning
+  -- function; pcall: if a future Neovim renames it, they just stay below.
+  pcall(function()
+    local msgs = require("vim._core.ui2.messages")
+    local set_pos = msgs.set_pos
+    msgs.set_pos = function(tgt)
+      set_pos(tgt)
+      local win = ui2.wins and ui2.wins.msg
+      if (tgt == nil or tgt == "msg") and win and vim.api.nvim_win_is_valid(win)
+        and not vim.api.nvim_win_get_config(win).hide then
+        vim.api.nvim_win_set_config(win, { relative = "editor", anchor = "NE", row = 0, col = vim.o.columns })
+      end
+    end
+  end)
 
   -- Put the ':' / '/' input in a centred box (like a command palette)
   -- instead of the bottom row. Uses ui2's internal window handle, so it is
@@ -312,6 +418,9 @@ if ok_ui2 then
       col = math.floor((vim.o.columns - width) / 2),
       width = width,
       border = "rounded",
+      -- the box says what it is for, like the title of an Obsidian prompt
+      title = ({ [":"] = " команда ", ["/"] = " поиск ", ["?"] = " поиск " })[vim.fn.getcmdtype()],
+      title_pos = "left",
     })
   end
   vim.api.nvim_create_autocmd({ "VimEnter", "VimResized", "CmdlineEnter" }, {
