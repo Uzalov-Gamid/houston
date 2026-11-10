@@ -84,10 +84,10 @@ vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI", "BufWinEnter" }, {
 -- (lua/mdview.lua): properties, headings, callouts that fold, code cards,
 -- tables, embeds, pictures. q or <leader>p — back to the same place.
 vim.keymap.set("n", "<leader>p", function() require("mdview").open() end,
-  { buffer = true, desc = "Reading view" })
+  { buffer = true, desc = "Режим чтения" })
 
 -- <leader>r: open the file in the default Markdown app (Obsidian)
 vim.keymap.set("n", "<leader>r", function()
   vim.cmd.write()
   vim.fn.jobstart({ "open", vim.fn.expand("%:p") })
-end, { buffer = true, desc = "Open in Markdown app" })
+end, { buffer = true, desc = "Открыть в Obsidian" })

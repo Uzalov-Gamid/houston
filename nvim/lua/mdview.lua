@@ -862,13 +862,13 @@ function M.open()
     end
   end
   for _, key in ipairs({ "q", "<leader>p" }) do
-    vim.keymap.set("n", key, back, { buffer = buf, desc = "Back to the editor" })
+    vim.keymap.set("n", key, back, { buffer = buf, desc = "Назад в редактор" })
   end
   for _, key in ipairs({ "<CR>", "za" }) do
-    vim.keymap.set("n", key, enter, { buffer = buf, desc = "Fold the callout / follow the link" })
+    vim.keymap.set("n", key, enter, { buffer = buf, desc = "Свернуть блок / открыть ссылку" })
   end
-  vim.keymap.set("n", "]]", function() jump(1) end, { buffer = buf, desc = "Next heading" })
-  vim.keymap.set("n", "[[", function() jump(-1) end, { buffer = buf, desc = "Previous heading" })
+  vim.keymap.set("n", "]]", function() jump(1) end, { buffer = buf, desc = "Следующий заголовок" })
+  vim.keymap.set("n", "[[", function() jump(-1) end, { buffer = buf, desc = "Предыдущий заголовок" })
   api.nvim_create_autocmd("VimResized", {
     buffer = buf,
     callback = function()

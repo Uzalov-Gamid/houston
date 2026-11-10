@@ -408,6 +408,16 @@ hl("NeogitPopupActionKey", { fg = c.blue, bold = true })
 hl("NeogitPopupSwitchKey", { fg = c.sky })
 hl("NeogitPopupOptionKey", { fg = c.sky })
 
+-- which-key: ember keys, emerald groups, quiet separators, glow frame
+hl("WhichKey", { fg = c.orange, bold = true })
+hl("WhichKeyGroup", { fg = c.blue })
+hl("WhichKeyDesc", { fg = c.fg })
+hl("WhichKeySeparator", { fg = c.faint })
+hl("WhichKeyValue", { fg = c.dim })
+hl("WhichKeyNormal", { fg = c.fg })
+hl("WhichKeyBorder", { fg = c.glow })
+hl("WhichKeyTitle", { fg = c.orange, bold = true })
+
 -- dadbod-ui: databases emerald like folders, tables ink
 hl("NotificationInfo", { fg = c.green })
 hl("NotificationWarning", { fg = c.yellow })

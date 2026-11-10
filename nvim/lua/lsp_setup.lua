@@ -47,10 +47,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local map = function(lhs, rhs, desc)
       vim.keymap.set("n", lhs, rhs, { buffer = buf, desc = desc })
     end
-    map("gd", vim.lsp.buf.definition, "Go to definition")
-    map("gD", vim.lsp.buf.declaration, "Go to declaration")
-    map("<leader>d", vim.diagnostic.open_float, "Show the problem in full")
-    map("<leader>F", function() vim.lsp.buf.format({ async = true }) end, "Format the file")
+    map("gd", vim.lsp.buf.definition, "Перейти к определению")
+    map("gD", vim.lsp.buf.declaration, "Перейти к объявлению")
+    map("<leader>d", vim.diagnostic.open_float, "Ошибка целиком")
+    map("<leader>F", function() vim.lsp.buf.format({ async = true }) end, "Отформатировать файл")
     -- the server's colours would fight the palette: keep tree-sitter's
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     if client then
@@ -63,4 +63,4 @@ vim.api.nvim_create_autocmd("LspAttach", {
 vim.api.nvim_create_user_command("Lsp", function()
   local names = vim.tbl_map(function(c) return c.name end, vim.lsp.get_clients({ bufnr = 0 }))
   print(#names > 0 and ("\u{25cf} " .. table.concat(names, " · ")) or "в этом файле серверов нет")
-end, { desc = "Language servers of this file" })
+end, { desc = "Язык-серверы этого файла" })

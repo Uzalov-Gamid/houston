@@ -15,7 +15,7 @@ vim.keymap.set("n", "<leader>r", function()
     local bin = vim.fn.shellescape(vim.fn.tempname())
     run_in_terminal("cc -Wall -Wextra -Werror -std=c11 " .. src .. " -o " .. bin .. " && " .. bin)
   end
-end, { buffer = true, desc = "Build & run (make or cc)" })
+end, { buffer = true, desc = "Собрать и запустить (make / cc)" })
 
 -- Format with clang-format on save (style: nearest .clang-format, otherwise
 -- Google with 4-space indent). Skipped silently if clang-format is missing

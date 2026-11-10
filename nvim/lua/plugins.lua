@@ -2,6 +2,7 @@
 -- First start after adding one: Neovim asks to install it — answer y.
 -- Update all: :lua vim.pack.update()   (versions pinned in nvim-pack-lock.json)
 --
+--   which-key      press Space (or g, ], [, z, Ctrl-w) and wait: a window lists the keys
 --   mini.pairs     ( [ { " ' ` close themselves, Enter between {} opens the body
 --   gitsigns       │ marks of changed lines, stage / preview a hunk, blame
 --   neogit         git control panel (status, stage, commit, push, log)
@@ -16,6 +17,7 @@ if #vim.api.nvim_list_uis() == 0 then
 end
 
 local ok_pack = pcall(vim.pack.add, {
+  "https://github.com/folke/which-key.nvim",
   "https://github.com/nvim-mini/mini.pairs",
   "https://github.com/lewis6991/gitsigns.nvim",
   "https://github.com/nvim-lua/plenary.nvim", -- needed by neogit
@@ -29,6 +31,47 @@ if not ok_pack then
 end
 
 local map = vim.keymap.set
+
+-- ── Key hints ────────────────────────────────────────────────────────
+-- Space and a pause → every <leader> key with its description (the desc of
+-- each mapping, written in Russian); also g, ], [, z, Ctrl-w. Space ? — the
+-- keys that work only in this buffer (tree, reading view, language server).
+pcall(function()
+  local wk = require("which-key")
+  wk.setup({
+    preset = "helix",
+    delay = 200,
+    icons = { mappings = false, separator = "\u{203a}", group = "" },
+    win = { border = "rounded", title = true, title_pos = "left", padding = { 1, 2 } },
+    spec = {
+      { "<leader>h", group = "git: изменения" },
+      { "<leader>?", function() wk.show({ global = false }) end, desc = "Клавиши этого файла" },
+      { "g", group = "переходы" },
+      { "]", group = "следующее" },
+      { "[", group = "предыдущее" },
+      { "z", group = "сворачивание и вид" },
+      { "<C-w>", group = "окна" },
+      -- Neovim's own keys, signed in Russian
+      { "K", desc = "Что это (описание)" },
+      { "grn", desc = "Переименовать везде" },
+      { "grr", desc = "Где используется" },
+      { "gra", desc = "Исправить / действие по месту" },
+      { "gri", desc = "Реализации" },
+      { "grt", desc = "Определение типа" },
+      { "gO", desc = "Символы файла" },
+      { "]d", desc = "Следующая ошибка" },
+      { "[d", desc = "Предыдущая ошибка" },
+      { "]q", desc = "Следующее совпадение поиска" },
+      { "[q", desc = "Предыдущее совпадение поиска" },
+      { "gcc", desc = "Закомментировать строку" },
+      { "gc", desc = "Закомментировать", mode = { "n", "x" } },
+      { "gf", desc = "Открыть файл под курсором" },
+      { "za", desc = "Свернуть / развернуть блок" },
+      { "zM", desc = "Свернуть всё" },
+      { "zR", desc = "Развернуть всё" },
+    },
+  })
+end)
 
 -- ── Brackets and quotes ──────────────────────────────────────────────
 pcall(function() require("mini.pairs").setup() end)
@@ -44,20 +87,20 @@ pcall(function()
     on_attach = function(buf)
       local gs = require("gitsigns")
       local m = function(lhs, rhs, desc) map("n", lhs, rhs, { buffer = buf, desc = desc }) end
-      m("]h", function() gs.nav_hunk("next") end, "Next change")
-      m("[h", function() gs.nav_hunk("prev") end, "Previous change")
-      m("<leader>hs", gs.stage_hunk, "Stage this change")
-      m("<leader>hr", gs.reset_hunk, "Undo this change")
-      m("<leader>hp", gs.preview_hunk, "Preview this change")
-      m("<leader>hb", function() gs.blame_line({ full = true }) end, "Who wrote this line")
+      m("]h", function() gs.nav_hunk("next") end, "Следующее изменение")
+      m("[h", function() gs.nav_hunk("prev") end, "Предыдущее изменение")
+      m("<leader>hs", gs.stage_hunk, "Добавить изменение в коммит")
+      m("<leader>hr", gs.reset_hunk, "Откатить изменение")
+      m("<leader>hp", gs.preview_hunk, "Показать изменение")
+      m("<leader>hb", function() gs.blame_line({ full = true }) end, "Кто написал строку")
     end,
   })
 end)
 
 pcall(function()
   require("diffview").setup({ enhanced_diff_hl = true, use_icons = true })
-  map("n", "<leader>hd", "<cmd>DiffviewOpen<cr>", { desc = "Diff of the working tree" })
-  map("n", "<leader>hh", "<cmd>DiffviewFileHistory %<cr>", { desc = "History of this file" })
+  map("n", "<leader>hd", "<cmd>DiffviewOpen<cr>", { desc = "Все изменения бок о бок" })
+  map("n", "<leader>hh", "<cmd>DiffviewFileHistory %<cr>", { desc = "История файла" })
 end)
 
 pcall(function()
@@ -69,7 +112,7 @@ pcall(function()
     integrations = { diffview = true },
     signs = { section = { "\u{203a}", "\u{2304}" }, item = { "\u{203a}", "\u{2304}" }, hunk = { "", "" } },
   })
-  map("n", "<leader>G", "<cmd>Neogit<cr>", { desc = "Git control panel" })
+  map("n", "<leader>G", "<cmd>Neogit<cr>", { desc = "Пульт git (neogit)" })
 end)
 
 -- ── SQL ──────────────────────────────────────────────────────────────
@@ -81,7 +124,7 @@ vim.g.db_ui_winwidth = 34
 vim.g.db_ui_show_database_icon = 1
 vim.g.db_ui_save_location = vim.fn.stdpath("data") .. "/db_ui"
 vim.g.db_ui_execute_on_save = 0
-map("n", "<leader>s", "<cmd>DBUIToggle<cr>", { desc = "Databases (SQL)" })
+map("n", "<leader>s", "<cmd>DBUIToggle<cr>", { desc = "Базы данных (SQL)" })
 
 -- ── TUIs in a floating frame ─────────────────────────────────────────
 -- the program fills a rounded box over the editor; quitting it closes the box
@@ -104,7 +147,7 @@ local function float(cmd, title)
   })
   vim.cmd.startinsert()
 end
-map("n", "<leader>c", function() float({ "lazydocker" }, "\u{f308} контейнеры") end, { desc = "Containers (lazydocker)" })
+map("n", "<leader>c", function() float({ "lazydocker" }, "\u{f308} контейнеры") end, { desc = "Контейнеры (lazydocker)" })
 map("n", "<leader>H", function()
   float({ "harlequin", "-a", "postgres", "postgresql:///" .. vim.env.USER }, "\u{f1c0} SQL")
-end, { desc = "SQL client (harlequin)" })
+end, { desc = "SQL-клиент harlequin" })

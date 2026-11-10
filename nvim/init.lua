@@ -114,18 +114,18 @@ require("plugins")
 -- ── Keymaps ──────────────────────────────────────────────────────────
 local map = vim.keymap.set
 
-map("n", "<leader>w", "<cmd>silent write<cr>", { desc = "Save" })
+map("n", "<leader>w", "<cmd>silent write<cr>", { desc = "Сохранить" })
 -- plain :w is silent too: the BufWritePost message (● file · N строк) replaces
 -- Neovim's '"file" 18L, 412B written'
 vim.cmd([[cnoreabbrev <expr> w (getcmdtype() == ':' && getcmdline() == 'w') ? 'silent w' : 'w']])
-map("n", "<leader>q", "<cmd>quit<cr>", { desc = "Quit" })
-map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
-map("n", "<leader>e", function() require("tree").toggle() end, { desc = "Project tree" })
+map("n", "<leader>q", "<cmd>quit<cr>", { desc = "Закрыть окно" })
+map("n", "<Esc>", "<cmd>nohlsearch<cr>", { desc = "Убрать подсветку поиска" })
+map("n", "<leader>e", function() require("tree").toggle() end, { desc = "Дерево проекта" })
 
 -- finding: file by name, text in the project, open buffers
-map("n", "<leader>f", ":find ", { desc = "Find file (Tab completes)" })
-map("n", "<leader>g", ":silent grep! ", { desc = "Search text in project" })
-map("n", "<leader>b", ":ls<cr>:buffer ", { desc = "Switch buffer" })
+map("n", "<leader>f", ":find ", { desc = "Найти файл (Tab дополняет)" })
+map("n", "<leader>g", ":silent grep! ", { desc = "Найти текст в проекте" })
+map("n", "<leader>b", ":ls<cr>:buffer ", { desc = "Открытые файлы" })
 -- grep results open in the quickfix list: ]q / [q jump between them
 vim.api.nvim_create_autocmd("QuickFixCmdPost", {
   pattern = "grep",
@@ -142,27 +142,27 @@ local function navigate(dir)
     vim.fn.system({ "tmux", "select-pane", "-" .. pane })
   end
 end
-map("n", "<C-h>", function() navigate("h") end, { desc = "Window/pane left" })
-map("n", "<C-j>", function() navigate("j") end, { desc = "Window/pane down" })
-map("n", "<C-k>", function() navigate("k") end, { desc = "Window/pane up" })
-map("n", "<C-l>", function() navigate("l") end, { desc = "Window/pane right" })
+map("n", "<C-h>", function() navigate("h") end, { desc = "Окно / панель слева" })
+map("n", "<C-j>", function() navigate("j") end, { desc = "Окно / панель ниже" })
+map("n", "<C-k>", function() navigate("k") end, { desc = "Окно / панель выше" })
+map("n", "<C-l>", function() navigate("l") end, { desc = "Окно / панель справа" })
 
 -- resize the current split with Shift + arrows (Ctrl-w = makes them equal)
-map("n", "<S-Left>", "<cmd>vertical resize -4<cr>", { desc = "Narrower" })
-map("n", "<S-Right>", "<cmd>vertical resize +4<cr>", { desc = "Wider" })
-map("n", "<S-Up>", "<cmd>resize +2<cr>", { desc = "Taller" })
-map("n", "<S-Down>", "<cmd>resize -2<cr>", { desc = "Shorter" })
+map("n", "<S-Left>", "<cmd>vertical resize -4<cr>", { desc = "Окно уже" })
+map("n", "<S-Right>", "<cmd>vertical resize +4<cr>", { desc = "Окно шире" })
+map("n", "<S-Up>", "<cmd>resize +2<cr>", { desc = "Окно выше" })
+map("n", "<S-Down>", "<cmd>resize -2<cr>", { desc = "Окно ниже" })
 
 -- move selected lines up/down, keep the selection
-map("v", "J", ":m '>+1<cr>gv=gv", { desc = "Move lines down" })
-map("v", "K", ":m '<-2<cr>gv=gv", { desc = "Move lines up" })
+map("v", "J", ":m '>+1<cr>gv=gv", { desc = "Строки вниз" })
+map("v", "K", ":m '<-2<cr>gv=gv", { desc = "Строки вверх" })
 
 -- keep the selection when indenting with < and >
 map("v", "<", "<gv")
 map("v", ">", ">gv")
 
 -- paste over a selection without losing what you copied
-map("x", "p", "P", { desc = "Paste, keep register" })
+map("x", "p", "P", { desc = "Вставить, не теряя скопированное" })
 
 -- keep the cursor in the middle when jumping half pages / through search
 map("n", "<C-d>", "<C-d>zz")
@@ -172,8 +172,8 @@ map("n", "N", "Nzzzv")
 
 -- ── Terminal & running code ──────────────────────────────────────────
 -- <leader>t: a terminal at the bottom. Esc Esc leaves terminal mode.
-map("n", "<leader>t", "<cmd>botright 12split | terminal<cr>", { desc = "Terminal" })
-map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Leave terminal mode" })
+map("n", "<leader>t", "<cmd>botright 12split | terminal<cr>", { desc = "Терминал снизу" })
+map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Выйти из ввода терминала" })
 
 vim.api.nvim_create_autocmd("TermOpen", {
   callback = function(args)
