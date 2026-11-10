@@ -108,7 +108,6 @@ brew "opencode"
 # ── Apps ──────────────────────────────────────────────────────────────
 cask "arc"
 cask "obsidian"
-cask "raycast"
 cask "homerow"
 cask "handy"                     # speech to text
 cask "appcleaner"
@@ -122,5 +121,6 @@ brew "mas"
 mas "Happ", id: 6788279553
 
 # Not available via Homebrew / App Store, install by hand:
+#   Liftoff (app launcher on ⌘Space) — ~/Documents/liftoff, ./make-app.sh
 #   Jazz (SberJazz) — https://salutejazz.ru
 #   My Words
