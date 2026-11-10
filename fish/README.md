@@ -1,8 +1,23 @@
 # fish — основная оболочка
 
 Конфиг: [`config.fish`](config.fish). Открыть: `fishconf`, перечитать: `asrc`.
-Промпт — [Tide](https://github.com/IlanCosman/tide), его настройки в
-[`tide.config.fish`](tide.config.fish). Плагины ставит
+Промпт — свой, в рамке ([`conf.d/prompt.fish`](conf.d/prompt.fish)):
+
+```
+╭─  ~/D/c-practice/stage-1   main ● ─────────────── 3.2s · 23:46
+╰─› make clean
+```
+
+Сверху — папка (родитель бледно, текущая navy), git-ветка (`●` — есть
+несохранённые изменения), справа длительность прошлой команды (если ≥ 1 с) и
+время. `›` — режим ввода (красный после ошибки), `‹` — обычный режим vi. После
+Enter рамка сворачивается в `● команда`; упавшая или долгая (≥ 3 с) команда
+оставляет под выводом строку `✗ exit 1 · 4.2s` / `✓ 4.2s`. Рамка — голубая
+(glow), цвета — палитра astronaut-light.
+
+Вернуться к [Tide](https://github.com/IlanCosman/tide) (он установлен, настройки в
+[`tide.config.fish`](tide.config.fish)): удалить `conf.d/prompt.fish` и открыть
+новое окно. Плагины ставит
 [fisher](https://github.com/jorgebucaran/fisher) по списку [`fish_plugins`](fish_plugins).
 
 > **abbr** — это сокращения: набираешь `gs` + пробел, и оно разворачивается в

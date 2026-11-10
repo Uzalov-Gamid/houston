@@ -29,6 +29,9 @@
 - **Клавиатура и указатель** — [Karabiner-Elements](https://karabiner-elements.pqrs.org)
   (Caps → Ctrl, стрелки на `Fn+HJKL`) и тема указателя Bibata через
   [MaCursor](https://github.com/writronic/MaCursor).
+- **Палитра** — светлая тема astronaut-light (кремовый, оранжевый, изумруд,
+  тёмно-синий, золото, серые) собрана в [`palette/`](palette); по ней же
+  тема Obsidian [`obsidian/Astronaut`](obsidian/Astronaut).
 - **Инструменты** — git + delta, lazygit, yazi, btop, fastfetch, glow, Colima
   (Docker без Docker Desktop).
 - **Установка одной командой** — [`Brewfile`](Brewfile) и [`install.sh`](install.sh)
@@ -148,7 +151,13 @@ git clone https://github.com/Uzalov-Gamid/houston.git ~/.config
 
 ## Тема astronaut
 
-Единая палитра для Ghostty, tmux, Neovim, glow и панели:
+Сейчас включена **светлая** astronaut-light: кремовый фон, оранжевый курсор,
+голубые рамки. Эталон раскладки цветов по ролям — Obsidian (заголовки, ссылки,
+блоки, иконки файлов), подробно — [`palette/README.md`](palette/README.md) и
+[`palette/obsidian-colors.md`](palette/obsidian-colors.md). Что поменялось —
+[`CHANGELOG.md`](CHANGELOG.md).
+
+Тёмная astronaut — для вечера:
 
 | Роль | Цвет |
 |---|---|

@@ -30,7 +30,19 @@ brew bundle --file="$CONFIG/Brewfile" || log "Some Brewfile items failed — re-
 
 # 4. npm tools
 log "Installing npm tools..."
-npm install -g @ticktick/ticktick-cli @sqltools/formatter
+npm install -g @ticktick/ticktick-cli @sqltools/formatter \
+  @microsoft/compose-language-service @postgrestools/postgrestools @ansible/ansible-language-server
+
+# 4b. uv tools: SQL client and the nginx language server
+log "Installing uv tools..."
+uv tool install 'harlequin[postgres]'
+uv tool install nginx-language-server
+
+# 4c. Postgres: start it at login, a database named after you (psql with no flags)
+log "Starting PostgreSQL..."
+brew services start postgresql@18
+sleep 3
+createdb "$USER" 2>/dev/null || true
 
 # 5. Personal Python libraries, into Homebrew's python3 (user site)
 log "Installing Python libraries..."

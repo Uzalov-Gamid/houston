@@ -52,9 +52,23 @@ brew "zsh-syntax-highlighting"
 brew "neovim"                    # editor, minimal config in nvim/
 brew "ripgrep"                   # `rg`, fast search
 brew "fd"                        # fast file finder
-brew "glow"                      # Markdown preview in nvim (<leader>p)
+brew "glow"                      # Markdown in the terminal (nvim draws its own reading view)
 brew "node"                      # npm tools (TickTick CLI, SQL formatter)
 cask "visual-studio-code"
+
+# ── Language servers for nvim (nvim/lsp/) ─────────────────────────────
+brew "pyright"                   # Python
+brew "bash-language-server"      # Bash / sh
+brew "shellcheck"                # Bash: the checks behind bash-language-server
+brew "shfmt"                     # Bash: formatting
+brew "yaml-language-server"      # YAML: k8s, GitHub Actions, compose schemas
+brew "vscode-langservers-extracted" # JSON, HTML, CSS
+brew "dockerfile-language-server" # Dockerfile
+brew "lua-language-server"       # Lua
+brew "terraform-ls"              # Terraform
+brew "helm-ls"                   # Helm templates
+brew "taplo"                     # TOML
+brew "uv"                        # Python tools: harlequin, nginx-language-server
 
 # ── Git ───────────────────────────────────────────────────────────────
 brew "git"
@@ -69,6 +83,7 @@ brew "docker"
 brew "docker-buildx"
 brew "docker-compose"
 brew "docker-credential-helper"
+brew "lazydocker"                # containers TUI (nvim: <leader>c)
 
 # ── Databases & SQL ───────────────────────────────────────────────────
 brew "postgresql@18"
