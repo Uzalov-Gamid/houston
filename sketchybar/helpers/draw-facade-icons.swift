@@ -61,12 +61,20 @@ for on in [false, true] {
     try render(on ? "toggle-on" : "toggle-off") {
         let track = NSBezierPath(roundedRect: CGRect(x: 0.5, y: 3, width: 21, height: 12),
                                  xRadius: 6, yRadius: 6)
-        (on ? NSColor(srgbRed: 0.82, green: 0.63, blue: 0.49, alpha: 1)
-            : NSColor(srgbRed: 0.31, green: 0.26, blue: 0.22, alpha: 1)).setFill()
+        (on ? ink : NSColor(srgbRed: 0.30, green: 0.25, blue: 0.22, alpha: 1)).setFill()
         track.fill()
+        track.lineWidth = 0.65
+        (on ? NSColor(srgbRed: 0.54, green: 0.65, blue: 0.74, alpha: 0.9)
+            : NSColor(srgbRed: 0.56, green: 0.46, blue: 0.39, alpha: 0.7)).setStroke()
+        track.stroke()
         let thumb = NSBezierPath(ovalIn: CGRect(x: on ? 11.5 : 2, y: 4.5, width: 9, height: 9))
-        (on ? NSColor(srgbRed: 0.16, green: 0.11, blue: 0.09, alpha: 1)
+        (on ? NSColor(srgbRed: 0.86, green: 0.90, blue: 0.94, alpha: 1)
             : NSColor(srgbRed: 0.70, green: 0.63, blue: 0.56, alpha: 1)).setFill()
         thumb.fill()
     }
+}
+
+try render("clock-badge") {
+    ink.setFill()
+    NSBezierPath(ovalIn: CGRect(x: 8, y: 6, width: 6, height: 6)).fill()
 }

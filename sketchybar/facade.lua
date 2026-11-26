@@ -13,6 +13,7 @@ local palette = {
 
 local battery_icons = require("icons").battery
 local connections = require("facade_connections")
+local details = require("facade_details")
 local aerospace = "/opt/homebrew/bin/aerospace"
 local font = "SF Mono:Heavy:14"
 local home = os.getenv("HOME")
@@ -49,6 +50,8 @@ return function(sbar)
 
   local displays = {}
   sbar.add("event", "facade_connections_changed")
+  sbar.add("event", "facade_agent_notice")
+  sbar.add("event", "facade_panel_seen")
   local status_values = {
     battery = { drawing = false },
     wifi = { icon = { background = symbol("wifi-off") } },
@@ -73,6 +76,7 @@ return function(sbar)
       local foreground = name == "clock" and palette.ink or palette.slate
       local props = pill(positions[name], fill[name], foreground)
       props.associated_display = display_id
+      props.popup = connections.style
       if built_in and name == "wifi" then props.padding_right = 0 end
       if name == "clock" then
         if not built_in then props.padding_right = 0 end
@@ -82,11 +86,18 @@ return function(sbar)
       else
         props.icon = { drawing = true, string = " ", width = 40 }
         props.label.drawing = false
-        props.popup = connections.style
       end
       local item_name = "facade." .. name .. "." .. display_id
       status[name] = sbar.add("item", item_name, props)
-      if props.popup then close_menus[name] = connections.attach(sbar, status[name], item_name, name) end
+      if name == "clock" then
+        status[name]:subscribe("mouse.clicked", function(env)
+          if env.BUTTON == "left" then
+            sbar.exec('"$HOME/.config/sketchybar/helpers/open-facade-panel.sh" ' .. display_id)
+          end
+        end)
+      else
+        close_menus[name] = connections.attach(sbar, status[name], item_name, name, { load = details[name] })
+      end
       if status_values[name] then status[name]:set(status_values[name]) end
     end
     return status, close_menus
@@ -95,8 +106,33 @@ return function(sbar)
   local status = sbar.add("item", "facade.status", { drawing = false, updates = true, update_freq = 8 })
   local power = sbar.add("item", "facade.power", { drawing = false, updates = true, update_freq = 120 })
 
-  local months = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }
-  local last_clock
+  local last_clock, unread = nil, false
+
+  local function refresh_clock()
+    local now = os.date("*t")
+    local separator = unread and " " or "·"
+    local label = string.format("%02d.%02d %s %02d:%02d", now.day, now.month, separator, now.hour, now.min)
+    if label == last_clock then return end
+    last_clock = label
+    local background = { drawing = false }
+    if unread then
+      background = symbol("clock-badge")
+      background.image.padding_left = 56
+    end
+    set_status("clock", { label = { string = label, background = background } })
+  end
+
+  local notice_request = 0
+  local notice = sbar.add("item", "facade.notice", { drawing = false, updates = true, update_freq = 30 })
+  notice:subscribe({ "forced", "routine", "system_woke", "facade_agent_notice", "facade_panel_seen" }, function()
+    notice_request = notice_request + 1
+    local request = notice_request
+    sbar.exec('/opt/homebrew/bin/python3 "$HOME/.config/sketchybar/helpers/facade-notifications.py" --unread', function(report)
+      if request ~= notice_request or type(report) ~= "table" then return end
+      unread = report.unread == true
+      refresh_clock()
+    end)
+  end)
 
   local last_battery
   power:subscribe({ "forced", "routine", "power_source_change", "system_woke" }, function()
@@ -134,12 +170,7 @@ return function(sbar)
   ]]
   local status_running = false
   status:subscribe({ "forced", "routine", "system_woke", "wifi_change", "volume_change", "facade_connections_changed" }, function()
-    local now = os.date("*t")
-    local label = string.format("%d %s  %02d:%02d", now.day, months[now.month], now.hour, now.min)
-    if label ~= last_clock then
-      last_clock = label
-      set_status("clock", { label = { string = label } })
-    end
+    refresh_clock()
 
     if status_running then return end
     status_running = true
