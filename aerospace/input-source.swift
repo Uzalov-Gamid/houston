@@ -9,24 +9,30 @@
 import AppKit
 import Carbon
 
+func currentInputSourceID() -> String? {
+    guard let current = TISCopyCurrentKeyboardInputSource()?.takeRetainedValue(),
+          let property = TISGetInputSourceProperty(current, kTISPropertyInputSourceID)
+    else { return nil }
+    return Unmanaged<CFString>.fromOpaque(property).takeUnretainedValue() as String
+}
+
 let args = Array(CommandLine.arguments.dropFirst())
 guard let choice = args.first else {
-    let current = TISCopyCurrentKeyboardInputSource().takeRetainedValue()
-    let id = Unmanaged<CFString>.fromOpaque(TISGetInputSourceProperty(current, kTISPropertyInputSourceID)).takeUnretainedValue()
+    guard let id = currentInputSourceID() else { exit(1) }
     print(id)
     exit(0)
 }
 
-let wanted: String
+let wanted = choice == "--ghostty-window" ? "com.apple.keylayout.ABC" : choice
+// Re-selecting the active layout on every focus change stalls window switching.
+if wanted == currentInputSourceID() { exit(0) }
+
 if choice == "--ghostty-window" {
     guard args.count == 2, let window = CGWindowID(args[1]),
           let info = (CGWindowListCopyWindowInfo(.optionIncludingWindow, window) as? [[String: Any]])?.first,
           let pid = info[kCGWindowOwnerPID as String] as? pid_t,
           NSRunningApplication(processIdentifier: pid)?.bundleIdentifier == "com.mitchellh.ghostty"
     else { exit(0) }
-    wanted = "com.apple.keylayout.ABC"
-} else {
-    wanted = choice
 }
 
 let filter = [kTISPropertyInputSourceID as String: wanted] as CFDictionary
