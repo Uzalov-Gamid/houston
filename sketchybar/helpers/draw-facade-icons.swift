@@ -56,3 +56,17 @@ try render("bluetooth") {
     ink.setStroke()
     path.stroke()
 }
+
+for on in [false, true] {
+    try render(on ? "toggle-on" : "toggle-off") {
+        let track = NSBezierPath(roundedRect: CGRect(x: 0.5, y: 3, width: 21, height: 12),
+                                 xRadius: 6, yRadius: 6)
+        (on ? NSColor(srgbRed: 0.82, green: 0.63, blue: 0.49, alpha: 1)
+            : NSColor(srgbRed: 0.31, green: 0.26, blue: 0.22, alpha: 1)).setFill()
+        track.fill()
+        let thumb = NSBezierPath(ovalIn: CGRect(x: on ? 11.5 : 2, y: 4.5, width: 9, height: 9))
+        (on ? NSColor(srgbRed: 0.16, green: 0.11, blue: 0.09, alpha: 1)
+            : NSColor(srgbRed: 0.70, green: 0.63, blue: 0.56, alpha: 1)).setFill()
+        thumb.fill()
+    }
+}

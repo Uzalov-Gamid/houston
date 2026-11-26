@@ -15,6 +15,7 @@ tap "writronic/tap"       # MaCursor
 # ── Window manager, menu bar, keyboard ────────────────────────────────
 cask "aerospace"                 # tiling window manager
 brew "sketchybar"                # top bar
+brew "blueutil"                  # SketchyBar Bluetooth controls
 brew "borders"                   # glow around the focused window
 brew "lua"                       # SketchyBar config is written in Lua
 brew "jq"                        # bar scripts parse JSON

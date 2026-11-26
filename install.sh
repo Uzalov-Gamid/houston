@@ -62,6 +62,7 @@ fi
 mkdir -p "$HOME/.local/bin"
 swiftc -O "$CONFIG/aerospace/input-source.swift" -o "$HOME/.local/bin/input-source"
 swiftc -O "$CONFIG/sketchybar/helpers/facade-audio.swift" -o "$HOME/.local/bin/sketchybar-facade-audio"
+swiftc -O "$CONFIG/sketchybar/helpers/facade-wifi.swift" -o "$HOME/.local/bin/sketchybar-facade-wifi"
 
 # 6c. git name and e-mail are kept out of the repo (git/identity, not tracked)
 if [ ! -f "$CONFIG/git/identity" ]; then

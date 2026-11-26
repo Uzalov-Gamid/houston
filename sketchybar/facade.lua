@@ -12,6 +12,7 @@ local palette = {
 }
 
 local battery_icons = require("icons").battery
+local connections = require("facade_connections")
 local aerospace = "/opt/homebrew/bin/aerospace"
 local font = "SF Mono:Heavy:14"
 local home = os.getenv("HOME")
@@ -47,6 +48,7 @@ return function(sbar)
   })
 
   local displays = {}
+  sbar.add("event", "facade_connections_changed")
   local status_values = {
     battery = { drawing = false },
     wifi = { icon = { background = symbol("wifi-off") } },
@@ -66,7 +68,7 @@ return function(sbar)
       or { clock = "center", wifi = "right", audio = "left", battery = "right" }
     local order = built_in and { "clock", "wifi", "audio", "battery" } or { "clock", "battery", "audio", "wifi" }
     local fill = { clock = palette.linen, battery = palette.blue, audio = palette.sand, wifi = palette.muted_blue }
-    local status = {}
+    local status, close_menus = {}, {}
     for _, name in ipairs(order) do
       local foreground = name == "clock" and palette.ink or palette.slate
       local props = pill(positions[name], fill[name], foreground)
@@ -80,11 +82,14 @@ return function(sbar)
       else
         props.icon = { drawing = true, string = " ", width = 40 }
         props.label.drawing = false
+        props.popup = connections.style
       end
-      status[name] = sbar.add("item", "facade." .. name .. "." .. display_id, props)
+      local item_name = "facade." .. name .. "." .. display_id
+      status[name] = sbar.add("item", item_name, props)
+      if props.popup then close_menus[name] = connections.attach(sbar, status[name], item_name, name) end
       if status_values[name] then status[name]:set(status_values[name]) end
     end
-    return status
+    return status, close_menus
   end
 
   local status = sbar.add("item", "facade.status", { drawing = false, updates = true, update_freq = 8 })
@@ -128,7 +133,7 @@ return function(sbar)
     printf '%s|%s\n' "$wifi" "$audio"
   ]]
   local status_running = false
-  status:subscribe({ "forced", "routine", "system_woke", "wifi_change", "volume_change" }, function()
+  status:subscribe({ "forced", "routine", "system_woke", "wifi_change", "volume_change", "facade_connections_changed" }, function()
     local now = os.date("*t")
     local label = string.format("%d %s  %02d:%02d", now.day, months[now.month], now.hour, now.min)
     if label ~= last_clock then
@@ -164,6 +169,7 @@ return function(sbar)
   local topology_pending = false
 
   local function remove_display(id, desktop)
+    for _, close in pairs(desktop.close_menus) do close() end
     sbar.remove("facade.desktop." .. id)
     for name in pairs(desktop.status) do sbar.remove("facade." .. name .. "." .. id) end
     displays[id] = nil
@@ -180,13 +186,11 @@ return function(sbar)
       props.associated_display = display
       props.icon = { drawing = true, color = palette.slate, font = "SF Pro:Semibold:9", padding_left = 12, padding_right = 7 }
       props.label.padding_left = 0
-      local status = built_in and add_status(display, true)
+      local status, close_menus
+      if built_in then status, close_menus = add_status(display, true) end
       local item = sbar.add("item", "facade.desktop." .. display, props)
-      desktop = {
-        item = item,
-        status = status or add_status(display, false),
-        built_in = built_in,
-      }
+      if not built_in then status, close_menus = add_status(display, false) end
+      desktop = { item = item, status = status, close_menus = close_menus, built_in = built_in }
       displays[display] = desktop
     end
 
