@@ -238,6 +238,11 @@ run = ['move-node-to-workspace brwse']
 
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'
+if.window-title-regex-substring = '^Neovim Preview$'
+run = ['move-node-to-workspace 2']
+
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
 run = ['move-node-to-workspace term']
 
 [[on-window-detected]]
