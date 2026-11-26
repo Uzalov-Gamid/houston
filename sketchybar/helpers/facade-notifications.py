@@ -85,16 +85,18 @@ def main():
             marker.write(str(time.time()))
         Path(marker.name).replace(SEEN)
         return
+    agent_items = agent_notifications()
+    if mode == "--unread":
+        seen = last_seen()
+        print(json.dumps({"unread": any(item["epoch"] > seen for item in agent_items)}))
+        return
     try:
         system = recent_notifications()
         readable = True
     except (OSError, sqlite3.Error):
         system, readable = [], False
-    items = sorted(agent_notifications() + system, key=lambda item: item["epoch"], reverse=True)
-    if mode == "--unread":
-        print(json.dumps({"unread": bool(items and items[0]["epoch"] > last_seen())}))
-    else:
-        print(json.dumps({"readable": readable, "items": items[:40]}))
+    items = sorted(agent_items + system, key=lambda item: item["epoch"], reverse=True)
+    print(json.dumps({"readable": readable, "items": items[:40]}))
 
 
 if __name__ == "__main__":

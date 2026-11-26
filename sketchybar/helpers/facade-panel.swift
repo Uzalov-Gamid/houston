@@ -9,12 +9,26 @@ private let panelBorder = Color.white.opacity(0.12)
 
 private struct Track: Decodable {
     let title: String?
+    let bundleIdentifier: String?
+    let mediaType: String?
     let artist: String?
     let artworkData: String?
     let elapsedTime: Double?
+    let elapsedTimeNow: Double?
     let duration: Double?
     let playing: Bool?
     let playbackRate: Double?
+
+    var isVideo: Bool { mediaType == "MRMediaRemoteMediaTypeVideo" }
+    var displayTitle: String { title.flatMap { $0.isEmpty ? nil : $0 } ?? (isVideo ? "Video" : "Active media") }
+    var seekDuration: Double? {
+        guard let duration, duration.isFinite, duration > 0 else { return nil }
+        return duration
+    }
+
+    func matches(_ other: Track?) -> Bool {
+        title == other?.title && artist == other?.artist && bundleIdentifier == other?.bundleIdentifier
+    }
 }
 
 private struct Notice: Decodable {
@@ -59,16 +73,16 @@ private final class PanelModel: ObservableObject {
         if refreshing { return }
         refreshing = true
         defer { refreshing = false }
-        let data = await Self.run(media, ["get", "--no-artwork"])
+        let data = await Self.run(media, ["get", "--no-artwork", "--allow-missing-title", "--now"])
         let next = try? JSONDecoder().decode(Track.self, from: data)
-        let changed = next?.title != track?.title || next?.artist != track?.artist
+        let changed = next.map { !$0.matches(track) } ?? (track != nil)
         track = next
         sampledAt = Date()
-        if changed {
-            cover = nil
-            let artwork = await Self.run(media, ["get"])
+        if changed { cover = nil }
+        if changed, let next {
+            let artwork = await Self.run(media, ["get", "--allow-missing-title"])
             if let detailed = try? JSONDecoder().decode(Track.self, from: artwork),
-               detailed.title == track?.title, detailed.artist == track?.artist,
+               detailed.matches(next),
                let encoded = detailed.artworkData, let bytes = Data(base64Encoded: encoded) {
                 cover = NSImage(data: bytes)
             }
@@ -116,7 +130,7 @@ private final class PanelModel: ObservableObject {
     func elapsed(at date: Date) -> Double {
         guard let track else { return 0 }
         let offset = track.playing == true ? max(0, date.timeIntervalSince(sampledAt)) * (track.playbackRate ?? 1) : 0
-        return min(track.duration ?? .greatestFiniteMagnitude, max(0, (track.elapsedTime ?? 0) + offset))
+        return min(track.seekDuration ?? .greatestFiniteMagnitude, max(0, (track.elapsedTimeNow ?? track.elapsedTime ?? 0) + offset))
     }
 
     func send(_ command: String, value: Double? = nil) {
@@ -218,9 +232,9 @@ private struct Dashboard: View {
     }
 
     private var player: some View {
-        let title = model.track?.title
-        let playing = model.track?.playing == true
-        let duration = model.track?.duration ?? 0
+        let track = model.track
+        let title = track?.displayTitle
+        let duration = track?.seekDuration ?? 0
         return VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 12) {
                 ZStack {
@@ -228,7 +242,7 @@ private struct Dashboard: View {
                     if let cover = model.cover {
                         Image(nsImage: cover).resizable().scaledToFill()
                     } else {
-                        Image(systemName: "music.note").font(.system(size: 21, weight: .medium)).foregroundStyle(copper)
+                        Image(systemName: track?.isVideo == true ? "film" : "music.note").font(.system(size: 21, weight: .medium)).foregroundStyle(copper)
                     }
                 }
                 .frame(width: 55, height: 55)
@@ -249,36 +263,17 @@ private struct Dashboard: View {
             TimelineView(.periodic(from: .now, by: 0.5)) { timeline in
                 let time = model.elapsed(at: timeline.date)
                 HStack(spacing: 8) {
-                    button(playing ? "pause.fill" : "play.fill", playing ? "Pause" : "Play", primary: true) {
-                        model.send("toggle-play-pause")
-                    }
                     WaveRail(fraction: duration > 0 ? time / duration : 0, title: title ?? "",
                              seek: duration > 0 ? { model.send("seek", value: $0 * duration) } : nil)
                     Text(duration > 0 ? timeLabel(time) + " / " + timeLabel(duration) : "—")
                         .font(.system(size: 10, weight: .medium, design: .monospaced))
                         .foregroundStyle(muted)
                         .monospacedDigit()
-                    button("backward.end.fill", "Previous") { model.send("previous-track") }
-                    button("forward.end.fill", "Next") { model.send("next-track") }
                 }
                 .disabled(title == nil)
                 .opacity(title == nil ? 0.5 : 1)
             }
         }
-    }
-
-    private func button(_ icon: String, _ label: String, primary: Bool = false, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: icon)
-                .font(.system(size: primary ? 12 : 11, weight: .semibold))
-                .frame(width: primary ? 33 : 25, height: 33)
-                .foregroundStyle(primary ? Color(red: 0.12, green: 0.09, blue: 0.08) : ink)
-                .background { if primary { Circle().fill(copper) } }
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .help(label)
-        .accessibilityLabel(label)
     }
 
     private func noticeRow(_ notice: Notice) -> some View {
