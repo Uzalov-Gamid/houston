@@ -18,6 +18,13 @@ local aerospace = "/opt/homebrew/bin/aerospace"
 local font = "SF Mono:Heavy:14"
 local home = os.getenv("HOME")
 local edge, gap = 14, 7
+local external_workspace_labels = {
+  ["1"] = "sand",
+  ["2"] = "clay",
+  ["3"] = "moss",
+  ["4"] = "slate",
+  ["5"] = "ink",
+}
 
 local function symbol(name)
   return {
@@ -226,7 +233,7 @@ return function(sbar)
     end
 
     desktop.workspace = workspace
-    local label = workspace
+    local label = (not built_in and external_workspace_labels[workspace]) or workspace
     if focused and mode ~= "main" then label = label .. "  ·  " .. mode end
     if desktop.label == label and desktop.focused == focused then return end
     desktop.label, desktop.focused = label, focused
