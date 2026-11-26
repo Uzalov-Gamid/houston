@@ -118,6 +118,21 @@ local function sql()
   open({ "harlequin", "-a", "postgres", "--theme", "gruvbox", vim.g.db }, "SQL", current_directory())
 end
 
+local function select_tool()
+  local tools = {
+    { label = "Git · LazyGit", run = git },
+    { label = "Docker · LazyDocker", run = docker },
+    { label = "SQL · Harlequin", run = sql },
+    { label = "SQL · Schema", run = function() require("dbpanel").toggle() end },
+  }
+  vim.ui.select(tools, {
+    prompt = "Tools",
+    format_item = function(tool) return tool.label end,
+  }, function(tool)
+    if tool then tool.run() end
+  end)
+end
+
 function M.setup()
   local group = api.nvim_create_augroup("TerminalTools", { clear = true })
   api.nvim_create_autocmd("VimResized", {
@@ -130,6 +145,8 @@ function M.setup()
       end
     end,
   })
+  vim.api.nvim_create_user_command("Tools", select_tool, { desc = "Choose a development tool", force = true })
+  vim.keymap.set("n", "<leader>T", select_tool, { desc = "Tools: Git, Docker, SQL" })
   vim.keymap.set("n", "<leader>G", git, { desc = "Git (LazyGit)" })
   vim.keymap.set("n", "<leader>c", docker, { desc = "Docker (LazyDocker)" })
   vim.keymap.set("n", "<leader>H", sql, { desc = "SQL (Harlequin)" })

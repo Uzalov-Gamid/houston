@@ -357,7 +357,7 @@ local function file_part()
   end
   local icon, color = require("tree").file_icon(name)
   local modified = vim.bo[buf].modified and " %#StModified#\u{25cf}" or ""
-  return "%#StIcon" .. color .. "#" .. icon .. " %#StFile#" .. vim.fn.expand("%:~:."):gsub("%%", "%%%%") .. modified
+  return "%#StIcon" .. color .. "#" .. icon .. " %#StFile#" .. name:gsub("%%", "%%%%") .. modified
 end
 
 function _G.statusline()
@@ -367,13 +367,13 @@ function _G.statusline()
   local is_dashboard = vim.bo.filetype == "dashboard"
   local ft = vim.bo.filetype ~= "" and vim.bo.filetype or "text"
   return table.concat({
-    segment(m[2], " " .. m[1] .. " "),
-    " ",
+    segment(m[2], " ● " .. m[1]),
+    "  ",
     -- File icons retain their semantic colours.
     "%<" .. file_part() .. " %*",
     "%=",
     is_file and (segment("StInfo", " " .. ft .. " ") .. " ") or "",
-    is_dashboard and "" or segment("StInfo", " %l:%c  %p%% "),
+    is_dashboard and "" or segment("StInfo", " %l:%c · %p%% "),
   })
 end
 

@@ -19,6 +19,8 @@ local NEVER_SHOW = { [".git"] = true, [".DS_Store"] = true, ["__pycache__"] = tr
 -- Nerd Font icons (Ghostty has them built in) + the highlight group of each.
 local ICON = {
   file = "\u{f016}",
+  folder = "\u{f114}",
+  folder_open = "\u{f115}",
 }
 local BY_EXT = {
   py = { "\u{e606}", "TreeIconYellow" },
@@ -108,14 +110,18 @@ local function render()
     return
   end
   local lines, marks = {}, {}
+  local current_row
   state.items = {}
 
   local function mark(row, col, len, group)
-    table.insert(marks, { row, col, col + len, group })
+    if len > 0 then
+      marks[#marks + 1] = { row, col, col + len, group }
+    end
   end
 
   -- header: project name
   local title = "  " .. vim.fn.fnamemodify(state.root, ":t")
+  if title == "  " then title = "  " .. state.root end
   lines[1] = title
   mark(0, 0, #title, "TreeRoot")
   lines[2] = ""
@@ -125,23 +131,31 @@ local function render()
       item.depth = depth
       local guide = string.rep("│ ", depth)
       local expanded = item.dir and state.open[item.path]
-      local icon = item.dir and (expanded and "▾" or "▸") or "·"
-      local icon_hl = expanded and "TreeIconDirOpen" or "TreeGuide"
-      local line = "  " .. guide .. icon .. " " .. item.name
-      table.insert(lines, line)
+      local disclosure = item.dir and (expanded and "▾ " or "▸ ") or "  "
+      local icon, icon_hl
+      if item.dir then
+        icon = expanded and ICON.folder_open or ICON.folder
+        icon_hl = expanded and "TreeIconDirOpen" or "TreeIconDir"
+      else
+        icon, icon_hl = icon_for(item)
+      end
+      local prefix = "  " .. guide .. disclosure
+      local spacing = string.rep(" ", math.max(1, 3 - vim.fn.strdisplaywidth(icon)))
+      lines[#lines + 1] = prefix .. icon .. spacing .. item.name
       local row = #lines - 1
       state.items[#lines] = item
 
-      local col = 2
-      mark(row, col, #guide, "TreeGuide")
-      col = col + #guide
-      mark(row, col, #icon, icon_hl)
-      col = col + #icon + 1
-      local name_hl = item.dir and "TreeDir" or (item.path == state.current and "TreeCurrent" or "TreeFile")
-      if not item.dir and item.name:sub(1, 1) == "." then
-        name_hl = item.path == state.current and "TreeCurrent" or "TreeHidden"
+      mark(row, 2, #guide, "TreeGuide")
+      mark(row, 2 + #guide, #disclosure, expanded and "TreeIconDirOpen" or "TreeGuide")
+      mark(row, #prefix, #icon, icon_hl)
+      local name_hl = item.dir and "TreeDir" or "TreeFile"
+      if item.path == state.current then
+        current_row = row
+        name_hl = "TreeCurrent"
+      elseif not item.dir and item.name:sub(1, 1) == "." then
+        name_hl = "TreeHidden"
       end
-      mark(row, col, #item.name, name_hl)
+      mark(row, #prefix + #icon + #spacing, #item.name, name_hl)
 
       if expanded then
         walk(item.path, depth + 1)
@@ -154,6 +168,9 @@ local function render()
   api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
   vim.bo[state.buf].modifiable = false
   api.nvim_buf_clear_namespace(state.buf, ns, 0, -1)
+  if current_row then
+    api.nvim_buf_set_extmark(state.buf, ns, current_row, 0, { line_hl_group = "TreeCurrentLine" })
+  end
   for _, m in ipairs(marks) do
     api.nvim_buf_set_extmark(state.buf, ns, m[1], m[2], { end_col = m[3], hl_group = m[4] })
   end

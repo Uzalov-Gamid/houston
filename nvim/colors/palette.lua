@@ -83,8 +83,8 @@ hl("FloatBorder", { fg = c.tan, bg = float_bg })
 hl("FloatTitle", { fg = c.orange, bg = float_bg, bold = true })
 hl("FloatFooter", { fg = c.grey, bg = float_bg })
 -- path above the code: project › src › file (init.lua builds it)
-hl("WinBar", { fg = c.grey, bg = c.bg1 })
-hl("WinBarNC", { fg = c.grey, bg = c.bg1 })
+hl("WinBar", { fg = c.grey })
+hl("WinBarNC", { fg = c.grey })
 hl("WinBarSep", { fg = c.tan })
 hl("WinBarFile", { fg = c.bold, bold = true })
 hl("WinBarModified", { fg = c.orange })
@@ -113,8 +113,8 @@ hl("PmenuKind", { fg = c.glow, bg = c.card })
 hl("PmenuExtra", { fg = light and "#a9998b" or c.grey, bg = c.card })
 hl("PmenuSbar", { bg = c.card })
 hl("PmenuThumb", { bg = c.dim })
-hl("StatusLine", { fg = c.fg, bg = c.bg1 })
-hl("StatusLineNC", { fg = c.grey, bg = c.bg1 })
+hl("StatusLine", { fg = c.fg })
+hl("StatusLineNC", { fg = c.grey })
 hl("TabLine", { fg = c.grey })
 hl("TabLineSel", { fg = c.fg, bold = true })
 hl("TabLineFill", {})
@@ -126,14 +126,14 @@ hl("WarningMsg", { fg = c.yellow })
 hl("MoreMsg", { fg = c.green })
 hl("Question", { fg = c.blue })
 
--- A coloured mode marker on the same surface as the status line.
+-- The mode uses the same restrained foreground accent as the tmux window label.
 for name, color in pairs({
-  StMode = light and c.peach or "#e3b590",
-  StModeInsert = light and c.mint or c.pine,
-  StModeVisual = light and c.butter or c.yellow,
-  StModeCommand = light and c.bg2 or c.steel,
+  StMode = light and c.orange or "#e3b590",
+  StModeInsert = c.pine,
+  StModeVisual = c.yellow,
+  StModeCommand = c.steel,
 }) do
-  hl(name, { fg = light and c.fg or c.bg0, bg = color, bold = true })
+  hl(name, { fg = color, bold = true })
 end
 hl("StFile", { fg = c.bold, bold = true })
 hl("StInfo", { fg = c.grey })
@@ -143,24 +143,28 @@ for icon_name, color in pairs({ Blue = c.blue, Steel = c.steel, Yellow = c.yello
   hl("StIcon" .. icon_name, { fg = color })
 end
 
--- project tree (lua/tree.lua): a slightly darker side panel
+-- Project tree: cool folder glyphs, warm file glyphs, copper for the open file.
+local tree_blue = light and "#53697d" or "#a4b9ce"
+local tree_sand = light and "#735d4b" or "#beaa94"
+local tree_copper = light and c.orange or "#e3b590"
 hl("TreeNormal", { fg = c.fg, bg = light and c.bg1 or c.card })
-hl("TreeCursorLine", { bg = light and c.peach or c.card_sel })
-hl("TreeRoot", { fg = c.orange, bold = true })
-hl("TreeDir", { fg = c.tan })
+hl("TreeCursorLine", { bg = light and "#dfd1ba" or "#352a24" })
+hl("TreeCurrentLine", { bg = light and "#e2d4bd" or "#2e2521" })
+hl("TreeRoot", { fg = tree_copper, bold = true })
+hl("TreeDir", { fg = c.fg })
 hl("TreeFile", { fg = c.fg })
 hl("TreeHidden", { fg = c.grey })
-hl("TreeCurrent", { fg = c.orange, bold = true })
-hl("TreeGuide", { fg = c.faint })
-hl("TreeIconDir", { fg = c.blue })              -- closed folder: emerald
-hl("TreeIconDirOpen", { fg = c.orange })         -- open folder: ember, as in Obsidian
-hl("TreeIconBlue", { fg = c.blue })
-hl("TreeIconSteel", { fg = c.steel })
-hl("TreeIconYellow", { fg = c.yellow })
-hl("TreeIconOrange", { fg = c.orange })
-hl("TreeIconGreen", { fg = c.green })
-hl("TreeIconTan", { fg = c.tan })
-hl("TreeIconFg", { fg = c.fg })
+hl("TreeCurrent", { fg = tree_copper, bold = true })
+hl("TreeGuide", { fg = light and c.dim or "#715c50" })
+hl("TreeIconDir", { fg = tree_blue })
+hl("TreeIconDirOpen", { fg = tree_copper })
+hl("TreeIconBlue", { fg = tree_blue })
+hl("TreeIconSteel", { fg = tree_blue })
+hl("TreeIconYellow", { fg = tree_sand })
+hl("TreeIconOrange", { fg = tree_copper })
+hl("TreeIconGreen", { fg = tree_blue })
+hl("TreeIconTan", { fg = tree_sand })
+hl("TreeIconFg", { fg = tree_sand })
 hl("TreeIconGrey", { fg = c.grey })
 
 -- start screen (lua/dashboard.lua)
