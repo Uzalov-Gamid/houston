@@ -123,6 +123,10 @@ git clone https://github.com/Uzalov-Gamid/houston.git ~/.config
 (идентификатор приложения показывает `aerospace list-apps`). Ширина выреза экрана
 для панели задаётся в [`sketchybar/settings.lua`](sketchybar/settings.lua) (`ui.notch_width`).
 
+## Развитие рабочего окружения
+
+[Чек-лист Neovim, tmux, Git, Docker, SQL и двух дисплеев](nvim/README.md#чек-лист-развития-рабочего-окружения).
+
 ## Как устроен репозиторий
 
 Репозиторий — это сама папка `~/.config`: программы читают конфиги прямо из неё,

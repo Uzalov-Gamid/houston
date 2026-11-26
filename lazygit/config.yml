@@ -1,0 +1,34 @@
+# MainStorage Astronaut code-block colours
+gui:
+  theme:
+    activeBorderColor:
+      - "#ef8f4c"
+      - bold
+    inactiveBorderColor:
+      - "#756154"
+    searchingActiveBorderColor:
+      - "#98c4ba"
+      - bold
+    optionsTextColor:
+      - "#a8bccf"
+    selectedLineBgColor:
+      - "#334741"
+    inactiveViewSelectedLineBgColor:
+      - "#342923"
+    cherryPickedCommitFgColor:
+      - "#c9c48e"
+    cherryPickedCommitBgColor:
+      - "#29392c"
+    markedBaseCommitFgColor:
+      - "#c9dbe8"
+    markedBaseCommitBgColor:
+      - "#303f4c"
+    unstagedChangesColor:
+      - "#e4836a"
+    defaultFgColor:
+      - "#e3dccb"
+    authorColors:
+      "*": "#d0a07e"
+    branchColorPatterns:
+      ^main(/|$): "#98c4ba"
+      ^master(/|$): "#98c4ba"

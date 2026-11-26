@@ -1,0 +1,14 @@
+# MainStorage Astronaut code-block colours.
+[theme]
+name = "facade"
+
+[colors]
+AlertInfo = "#7daea3"
+AlertWarn = "#e5c15a"
+AlertError = "#e4836a"
+Annotation = "#a9998b"
+Base = "#e3dccb"
+Guidance = "#a8bccf"
+Important = "#ef8f4c"
+Title = "#f1ead8"
+Muted = "#a9998b"

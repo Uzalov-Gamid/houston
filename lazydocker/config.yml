@@ -1,0 +1,13 @@
+gui:
+  border: rounded
+  sidePanelWidth: 0.32
+  theme:
+    activeBorderColor:
+      - yellow
+      - bold
+    inactiveBorderColor:
+      - black
+    selectedLineBgColor:
+      - black
+    optionsTextColor:
+      - cyan

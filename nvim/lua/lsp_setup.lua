@@ -1,5 +1,5 @@
 -- Language servers: they check the code and answer questions about it,
--- but never type for you — no autocompletion is enabled.
+-- but never type for you — no autocompletion, except in SQL (see LspAttach).
 --
 -- Each server is one file in lsp/ (command, file types, project root).
 -- A server whose program is not installed is skipped silently.
@@ -55,6 +55,55 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local client = vim.lsp.get_client_by_id(args.data.client_id)
     if client then
       client.server_capabilities.semanticTokensProvider = nil
+      -- the one exception to "no autocompletion": SQL tables and columns
+      -- come from the live database and are not worth memorising. The menu
+      -- opens only while a word is being typed (not on space) with the first
+      -- suggestion already picked, as in VS Code: Enter accepts it,
+      -- Ctrl-j / Ctrl-k move to another. <leader>a turns it off and on.
+      if client.name == "postgres" then
+        -- a syntax error is reported on the first line of the whole query,
+        -- not where it is: keep its message visible wherever the cursor is
+        vim.diagnostic.config({
+          virtual_text = { current_line = false, prefix = dot, spacing = 2 },
+        }, vim.lsp.diagnostic.get_namespace(client.id))
+        vim.lsp.completion.enable(true, client.id, buf, { autotrigger = false })
+        vim.bo[buf].completeopt = "menuone,noinsert,fuzzy,popup"
+        vim.opt.shortmess:append("c")
+        -- accepting inserts a word, which must not reopen the menu at once
+        local accepted = false
+        vim.api.nvim_create_autocmd("CompleteDone", {
+          buffer = buf,
+          callback = function() accepted = vim.v.completed_item.word ~= nil end,
+        })
+        vim.api.nvim_create_autocmd("TextChangedI", {
+          buffer = buf,
+          callback = function()
+            if accepted then accepted = false return end
+            if vim.g.sql_autocomplete == false or vim.fn.pumvisible() == 1 then return end
+            local col = vim.api.nvim_win_get_cursor(0)[2]
+            local before = vim.api.nvim_get_current_line():sub(col, col)
+            if before:match("[%w_]") then vim.lsp.completion.get() end
+          end,
+        })
+        local pum = function(key, otherwise)
+          return function() return vim.fn.pumvisible() == 1 and key or otherwise end
+        end
+        local imap = function(lhs, rhs, desc)
+          vim.keymap.set("i", lhs, rhs, { buffer = buf, expr = true, desc = desc })
+        end
+        imap("<C-j>", pum("<C-n>", "<C-j>"), "Подсказка ниже")
+        imap("<C-k>", pum("<C-p>", "<C-k>"), "Подсказка выше")
+        imap("<CR>", function()
+          if vim.fn.pumvisible() == 0 then return "<CR>" end
+          local info = vim.fn.complete_info({ "selected" })
+          return info.selected ~= -1 and "<C-y>" or "<C-e><CR>"
+        end, "Вставить подсказку")
+        map("<leader>a", function()
+          vim.g.sql_autocomplete = vim.g.sql_autocomplete == false
+          print(vim.g.sql_autocomplete and "\u{25cf} автодополнение SQL включено"
+            or "\u{25cb} автодополнение SQL выключено")
+        end, "Автодополнение SQL вкл/выкл")
+      end
     end
   end,
 })

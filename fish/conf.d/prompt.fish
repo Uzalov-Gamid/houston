@@ -14,24 +14,29 @@
 set -g fish_transient_prompt 1
 
 function _prompt_git
-    set -l branch (command git symbolic-ref --short HEAD 2>/dev/null)
-    or set branch (command git rev-parse --short HEAD 2>/dev/null)
-    or return
-    set_color 134b40
+    set -l state (command git status --porcelain=v1 --branch --untracked-files=no 2>/dev/null)
+    set -q state[1]; or return
+    set -l branch (string replace -r '^## (No commits yet on |Initial commit on )?' '' -- $state[1])
+    set branch (string replace -r '\.\.\..*' '' -- $branch)
+    if test "$branch" = 'HEAD (no branch)'
+        set branch (command git rev-parse --short HEAD 2>/dev/null)
+        or return
+    end
+    set_color b5b07a
     printf '   %s' $branch
-    if not command git diff --quiet HEAD 2>/dev/null
-        set_color b4541b
+    if set -q state[2]
+        set_color e5c15a
         printf ' ●'
     end
 end
 
 function fish_prompt
     set -l last $status
-    set -l frame 7daea3
+    set -l frame 59473e
 
     # after Enter: one line, an ember dot in front of the command
     if contains -- --final-rendering $argv
-        set_color b4541b
+        set_color ef8f4c
         printf '● '
         set_color normal
         return
@@ -42,25 +47,25 @@ function fish_prompt
     set -l parent (string replace -r '[^/]*$' '' -- $dir)
     set -l here (string match -r '[^/]*$' -- $dir)
     # "$(…)": an empty result (no git here) must not empty the whole string
-    set -l left "$(set_color $frame)╭─ $(set_color 1f6b5c) $(set_color 8f8276)$parent$(set_color --bold 1e3a5f)$here$(set_color normal)$(_prompt_git) "
+    set -l left "$(set_color a9998b)$parent$(set_color --bold 7daea3)$here$(set_color normal)$(_prompt_git) "
     set -l right ' '
     if test "$CMD_DURATION" -ge 1000 2>/dev/null
-        set right "$right"(set_color 8f8276)(math -s1 $CMD_DURATION / 1000)'s'(set_color c9b99c)' · '
+        set right "$right"(set_color a9998b)(math -s1 $CMD_DURATION / 1000)'s'(set_color 59473e)' · '
     end
-    set right "$right"(set_color 8f8276)(date +%H:%M)(set_color normal)
+    set right "$right"(set_color a9998b)(date +%H:%M)(set_color normal)
     set -l fill (math $COLUMNS - (string length --visible -- $left) - (string length --visible -- $right))
     echo
     printf '%s%s%s%s\n' $left (set_color $frame) (string repeat -n (math max 1, $fill) ─) $right
 
     # input line: › in insert mode (rust after an error), ‹ in normal mode
     set_color $frame
-    printf '╰─'
+    printf ' '
     switch "$fish_bind_mode"
         case default visual
-            set_color --bold 1f6b5c
+            set_color --bold 7daea3
             printf '‹ '
         case '*'
-            test $last -eq 0; and set_color --bold b4541b; or set_color --bold b0381a
+            test $last -eq 0; and set_color --bold ef8f4c; or set_color --bold e4836a
             printf '› '
     end
     set_color normal
@@ -77,15 +82,15 @@ function _prompt_after --on-event fish_postexec
     set -l last $status
     set -l slow (test "$CMD_DURATION" -ge 3000 2>/dev/null; and echo 1)
     if test $last -ne 0
-        set_color b0381a
+        set_color e4836a
         printf '  ✗ exit %s' $last
-        test -n "$slow"; and printf (set_color 8f8276)' · %ss' (math -s1 $CMD_DURATION / 1000)
+        test -n "$slow"; and printf (set_color a9998b)' · %ss' (math -s1 $CMD_DURATION / 1000)
         set_color normal
         echo
     else if test -n "$slow"
-        set_color 5d6a1c
+        set_color b5b07a
         printf '  ✓ '
-        set_color 8f8276
+        set_color a9998b
         printf '%ss\n' (math -s1 $CMD_DURATION / 1000)
         set_color normal
     end

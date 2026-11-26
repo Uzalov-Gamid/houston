@@ -50,7 +50,8 @@ opt.updatetime = 250
 opt.termguicolors = true      -- 24-bit colours (Ghostty supports them)
 opt.showmode = false          -- the mode is shown in the status line
 opt.confirm = true            -- ask to save instead of refusing to quit
-opt.winborder = "rounded"     -- every floating window: thin rounded frame, no fill
+opt.winborder = "rounded"     -- rounded frame for floating windows
+opt.fillchars:append({ eob = " " })
 
 -- tabs, trailing spaces and indent guides (the "│" every indent level)
 opt.list = true
@@ -109,7 +110,9 @@ vim.filetype.add({
 -- language servers (lsp/*.lua, lua/lsp_setup.lua) and the few plugins
 -- (lua/plugins.lua): git, SQL, auto-closing brackets
 require("lsp_setup")
+vim.g.db = vim.g.db or "postgresql:///sql_bootcamp"
 require("plugins")
+require("terminal_tools").setup()
 
 -- ── Keymaps ──────────────────────────────────────────────────────────
 local map = vim.keymap.set
@@ -188,12 +191,60 @@ vim.api.nvim_create_autocmd("TermOpen", {
   end,
 })
 
+-- An output window opened by <leader>r closes by itself as soon as you
+-- leave it (and its buffer goes away). Terminals opened by hand stay.
+function _G.close_on_leave(win)
+  local buf = vim.api.nvim_win_get_buf(win)
+  vim.api.nvim_create_autocmd("WinLeave", {
+    buffer = buf,
+    once = true,
+    callback = function()
+      vim.schedule(function()
+        if vim.api.nvim_win_is_valid(win) and #vim.api.nvim_tabpage_list_wins(0) > 1 then
+          vim.api.nvim_win_close(win, true)
+        end
+        if vim.api.nvim_buf_is_valid(buf) then
+          vim.api.nvim_buf_delete(buf, { force = true })
+        end
+      end)
+    end,
+  })
+end
+
 -- Save the file and run `cmd` in a terminal split at the bottom. Each
 -- language sets what <leader>r runs in after/ftplugin/<ft>.lua.
 function _G.run_in_terminal(cmd)
   vim.cmd.write()
-  vim.cmd("botright 12split")
+  vim.cmd("botright 16split")
   vim.cmd.terminal(cmd)
+  close_on_leave(vim.api.nvim_get_current_win())
+end
+
+-- Run SQL text with psql in the database vim.g.db and show the result in a
+-- split at the bottom (no "Running query" messages): q or Enter closes it,
+-- leaving it closes it too. Errors land in the same window.
+function _G.run_sql(text)
+  if vim.bo.buftype == "" and vim.bo.modified then
+    vim.cmd.write()
+  end
+  local res = vim.system({ "psql", "-X", "-q", "-P", "pager=off", "-d", vim.g.db or "postgres" },
+    { stdin = text, text = true }):wait()
+  local out = vim.split(vim.trim((res.stdout or "") .. (res.stderr or "")), "\n")
+  if #out == 1 and out[1] == "" then
+    out = { "Готово, вывода нет." }
+  end
+  vim.cmd("botright 16split")
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_win_set_buf(0, buf)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, out)
+  vim.bo[buf].modifiable = false
+  vim.bo[buf].filetype = "dbout"
+  vim.wo.number = false
+  vim.wo.relativenumber = false
+  for _, key in ipairs({ "q", "<cr>" }) do
+    vim.keymap.set("n", key, "<cmd>close<cr>", { buffer = buf, nowait = true, desc = "Закрыть результат" })
+  end
+  close_on_leave(vim.api.nvim_get_current_win())
 end
 
 -- ── Autocommands ─────────────────────────────────────────────────────
@@ -270,10 +321,8 @@ vim.api.nvim_create_autocmd("OptionSet", {
 require("activity").setup()
 require("dashboard").setup()
 
--- Status line in the tmux bar's style: rounded pills on a transparent
--- background.   ( NORMAL ) (  file ● )            ( filetype ) ( 26:1  14% )
+-- Status line paired with tmux: mode, file, filetype and cursor position.
 -- Colours: StMode* / StFile / StInfo in colors/palette.lua.
-local L, R = "\u{e0b6}", "\u{e0b4}" -- rounded pill ends (Nerd Font)
 
 local modes = {
   n = { "NORMAL", "StMode" },
@@ -286,8 +335,8 @@ local modes = {
   t = { "TERMINAL", "StModeInsert" },
 }
 
-local function pill(group, text)
-  return "%#" .. group .. "Cap#" .. L .. "%#" .. group .. "#" .. text .. "%#" .. group .. "Cap#" .. R .. "%*"
+local function segment(group, text)
+  return "%#" .. group .. "#" .. text .. "%*"
 end
 
 -- icon + name of what is in the window (not "term://~/…//73894:/bin/sh")
@@ -313,19 +362,18 @@ end
 
 function _G.statusline()
   local m = modes[vim.fn.mode():sub(1, 1)] or modes.n
-  -- filetype pill only for real files (not terminal / reading view / tree)
+  -- filetype only for real files (not terminal / reading view / tree)
   local is_file = vim.bo.buftype == "" and vim.bo.filetype ~= "tree"
   local is_dashboard = vim.bo.filetype == "dashboard"
   local ft = vim.bo.filetype ~= "" and vim.bo.filetype or "text"
-  -- no padding at the edges: pills sit flush, like the tmux bar
   return table.concat({
-    pill(m[2], " " .. m[1] .. " "),
+    segment(m[2], " " .. m[1] .. " "),
     " ",
-    -- the file pill: its parts set their own colours, so build it by hand
-    "%#StFileCap#" .. L .. "%#StFile# " .. file_part() .. " %#StFileCap#" .. R .. "%*",
+    -- File icons retain their semantic colours.
+    "%<" .. file_part() .. " %*",
     "%=",
-    is_file and (pill("StInfo", " " .. ft .. " ") .. " ") or "",
-    is_dashboard and "" or pill("StInfo", " %l:%c  %p%% "),
+    is_file and (segment("StInfo", " " .. ft .. " ") .. " ") or "",
+    is_dashboard and "" or segment("StInfo", " %l:%c  %p%% "),
   })
 end
 
@@ -387,7 +435,8 @@ if ok_ui2 then
   ui2.enable({ enable = true, msg = { targets = "msg", msg = { timeout = 4000 } } })
 
   -- Messages in the top-right corner, right under the tmux pills (ui2 puts
-  -- them bottom-right above the status line). Wraps ui2's positioning
+  -- them bottom-right above the status line), in a fixed narrow column so
+  -- a long one wraps instead of covering the code. Wraps ui2's positioning
   -- function; pcall: if a future Neovim renames it, they just stay below.
   pcall(function()
     local msgs = require("vim._core.ui2.messages")
@@ -397,7 +446,11 @@ if ok_ui2 then
       local win = ui2.wins and ui2.wins.msg
       if (tgt == nil or tgt == "msg") and win and vim.api.nvim_win_is_valid(win)
         and not vim.api.nvim_win_get_config(win).hide then
-        vim.api.nvim_win_set_config(win, { relative = "editor", anchor = "NE", row = 0, col = vim.o.columns })
+        local width = math.min(36, vim.o.columns - 4)
+        vim.wo[win].wrap = true
+        vim.api.nvim_win_set_config(win, { relative = "editor", anchor = "NE", row = 0, col = vim.o.columns, width = width })
+        local height = vim.api.nvim_win_text_height(win, {}).all
+        vim.api.nvim_win_set_config(win, { height = math.min(height, math.floor(vim.o.lines / 2)) })
       end
     end
   end)

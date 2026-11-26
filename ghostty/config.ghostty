@@ -1,13 +1,11 @@
-# Colours: themes/astronaut (from the wallpaper). Old: theme = Gruvbox Dark
-# astronaut-light: bright light / sun (no glare). Back to dark: theme = astronaut
-# Follow macOS appearance: theme = light:astronaut-light,dark:astronaut
-theme = astronaut-light
+# MainStorage Astronaut code-block palette.
+theme = facade
 cursor-style = "block"
 cursor-style-blink = false
 
-# background-blur = true
-# background-opacity = 0.7
-# background = #202020
+# Dark smoked glass: broad wallpaper colours remain visible behind text.
+background-opacity = 0.69
+background-blur = 42
 
 # ( ) i $ <=
 
@@ -21,9 +19,10 @@ window-padding-y = 14
 # Ghostty has the Nerd Font symbols built in and falls back to them.
 font-size = 14.5
 font-family = "SF Mono"
-adjust-cell-height = 5
-# heavier strokes, like Xcode's rendering
+adjust-cell-height = 4
 font-thicken = true
+font-style = bold
+font-style-bold = heavy
 
 # Previous font:
 # font-family = "0xProto Nerd Font Propo"
@@ -49,11 +48,6 @@ font-thicken = true
 # font-feature = cv06
 # font-feature = ss04
 # font-feature = -calt
-
-font-style = bold
-# bold text (e.g. headings, git output) one step heavier, so it still stands out
-font-style-bold = heavy
-
 
 mouse-hide-while-typing = true
 # no macOS scrollbar over the terminal (mouse / keys still scroll)

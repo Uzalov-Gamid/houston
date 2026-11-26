@@ -1,0 +1,24 @@
+# Astronaut code-block colours from MainStorage.
+background = #1c1513
+foreground = #e3dccb
+cursor-color = #ef8f4c
+cursor-text = #1c1513
+selection-background = #334741
+selection-foreground = #f1ead8
+
+palette = 0=#1c1513
+palette = 1=#e4836a
+palette = 2=#b5b07a
+palette = 3=#e5c15a
+palette = 4=#8aa1b8
+palette = 5=#d0a07e
+palette = 6=#7daea3
+palette = 7=#e3dccb
+palette = 8=#a9998b
+palette = 9=#ef8f4c
+palette = 10=#c9c48e
+palette = 11=#f0d27a
+palette = 12=#a8bccf
+palette = 13=#e0b896
+palette = 14=#98c4ba
+palette = 15=#f1ead8

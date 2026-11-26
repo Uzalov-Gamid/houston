@@ -6,12 +6,11 @@
 
 ## Как выглядит
 
-- **Тема astronaut** — цвета с обоев: тёмное стекло шлема (фон), кремовый мех
-  (текст), оранжевый (курсор, акценты), олива, жёлтый, стальной синий, плюс
-  голубой `#7daea3` свечения окон. Та же палитра в [Neovim](../nvim/) и [tmux](../tmux/).
-- **Шрифт** SF Mono Bold 14.5 (шрифт Xcode), жирный текст — Heavy, `font-thicken`
-  для плотности. Nerd-иконки Ghostty берёт из встроенного набора, отдельный
-  Nerd-шрифт не нужен.
+- **astronaut-light / Smoked Paper** — тёплый дымчатый greige-фон, графитовый текст,
+  сдержанные petrol- и tobacco-акценты. Прозрачность 90% и blur дают глубину,
+  но не мешают читать текст.
+- **Шрифт** SF Mono Medium 14, жирный текст — Semibold. Nerd-иконки Ghostty берёт
+  из встроенного набора, отдельный Nerd-шрифт не нужен.
 - Без заголовка окна и кнопок, без полосы прокрутки (`scrollbar = never`), отступы 14 px.
 
 При переходе в Ghostty раскладка сама переключается на английскую — это
@@ -37,3 +36,7 @@
 - Эффекты курсора: в `shaders/` лежат шейдеры (светящийся след, рябь, «взрыв»).
   Включить: раскомментировать строку `custom-shader = shaders/cursor_tail.glsl`.
 - Проверить конфиг на ошибки: `ghostty +validate-config`.
+
+### November 2026 glass update
+
+`facade` uses the dark code-block colours from MainStorage, SF Mono Bold 14.5, opacity 0.69 and blur radius 42. Restarting Ghostty applies any window properties that the live reload leaves pending.

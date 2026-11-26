@@ -9,8 +9,7 @@
 --   diffview       side-by-side diff of the working tree / a commit
 --   vim-dadbod(-ui) SQL: databases, tables, run a query from a .sql buffer
 --
--- Outside Neovim, in a floating frame: lazydocker (containers), harlequin
--- (SQL client). Keys are listed in nvim/README.md.
+-- The terminal tools and their keys are defined in lua/terminal_tools.lua.
 -- headless runs (scripts, checks) skip plugins: the install prompt would hang them
 if #vim.api.nvim_list_uis() == 0 then
   return
@@ -112,42 +111,22 @@ pcall(function()
     integrations = { diffview = true },
     signs = { section = { "\u{203a}", "\u{2304}" }, item = { "\u{203a}", "\u{2304}" }, hunk = { "", "" } },
   })
-  map("n", "<leader>G", "<cmd>Neogit<cr>", { desc = "Пульт git (neogit)" })
 end)
 
 -- ── SQL ──────────────────────────────────────────────────────────────
--- The local Postgres (brew services, database = your user name). Add more
--- as name = "postgresql://user:password@host:5432/db".
-vim.g.dbs = { local_pg = "postgresql:///" .. vim.env.USER }
+-- The local Postgres (brew services). vim.g.db is where <leader>r in a
+-- .sql file runs; the drawer (<leader>s) shows it too. Keep credentials
+-- in local PostgreSQL configuration, outside the editor config.
 vim.g.db_ui_use_nerd_fonts = 1
 vim.g.db_ui_winwidth = 34
 vim.g.db_ui_show_database_icon = 1
 vim.g.db_ui_save_location = vim.fn.stdpath("data") .. "/db_ui"
 vim.g.db_ui_execute_on_save = 0
-map("n", "<leader>s", "<cmd>DBUIToggle<cr>", { desc = "Базы данных (SQL)" })
-
--- ── TUIs in a floating frame ─────────────────────────────────────────
--- the program fills a rounded box over the editor; quitting it closes the box
-local function float(cmd, title)
-  local w = math.floor(vim.o.columns * 0.9)
-  local h = math.floor(vim.o.lines * 0.85)
-  local buf = vim.api.nvim_create_buf(false, true)
-  local win = vim.api.nvim_open_win(buf, true, {
-    relative = "editor", width = w, height = h,
-    row = math.floor((vim.o.lines - h) / 2) - 1, col = math.floor((vim.o.columns - w) / 2),
-    border = "rounded", title = " " .. title .. " ", title_pos = "left",
-  })
-  vim.fn.jobstart(cmd, {
-    term = true,
-    on_exit = function()
-      if vim.api.nvim_win_is_valid(win) then
-        vim.api.nvim_win_close(win, true)
-      end
-    end,
-  })
-  vim.cmd.startinsert()
-end
-map("n", "<leader>c", function() float({ "lazydocker" }, "\u{f308} контейнеры") end, { desc = "Контейнеры (lazydocker)" })
-map("n", "<leader>H", function()
-  float({ "harlequin", "-a", "postgres", "postgresql:///" .. vim.env.USER }, "\u{f1c0} SQL")
-end, { desc = "SQL-клиент harlequin" })
+-- the drawer shows only tables: no help text, no "new query / buffers /
+-- saved queries", no Postgres system schemas
+vim.g.db_ui_show_help = 0
+vim.g.db_ui_drawer_sections = { "schemas" }
+vim.g.db_ui_hide_schemas = { "pg_catalog", "pg_toast", "information_schema" }
+-- "query finished" goes to the command line instead of a big float over the code
+vim.g.db_ui_force_echo_notifications = 1
+map("n", "<leader>s", function() require("dbpanel").toggle() end, { desc = "Панель базы (SQL)" })

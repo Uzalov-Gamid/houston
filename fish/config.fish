@@ -13,9 +13,7 @@ zoxide init --cmd cd fish | source
 
 fzf --fish | source
 
-# fzf colours: Obsidian roles on cream — selected row peach (like the active
-# file), matches ember, frame in the aqua window glow
-set -gx FZF_DEFAULT_OPTS "--color=bg+:#f0c9a0,fg+:#2a1f1b,gutter:-1,hl:#b0381a,hl+:#b0381a,pointer:#b4541b,marker:#b4541b,prompt:#1f6b5c,info:#6e6155,spinner:#b4541b,header:#6e6155,border:#7daea3,separator:#d6c8ab,scrollbar:#d6c8ab,query:#2a1f1b"
+# Picker colours are defined once in atelier.fish below.
 
 # fzf popup on Tab (fifc plugin, listed in fish_plugins); folders preview with lsd
 # list only the current directory, not everything below it
@@ -53,7 +51,7 @@ function _dirs_with_icons
             set -a shown "$parts[2] $full"
         end
     end
-    printf '\033[1;34m%s\033[0m\n' $shown $hidden
+    printf '\033[1;38;2;192;198;208m%s\033[0m\n' $shown $hidden
 end
 fifc -O 1 -n 'test "$fifc_group" = directories' \
     -s '_dirs_with_icons | cat' \
@@ -74,6 +72,7 @@ fish_add_path "$HOME/.local/bin"
 bind -M visual -m default y fish_clipboard_copy end-selection repaint-mode
 
 source "$HOME/.config/fish/tide.config.fish"
+source "$HOME/.config/fish/atelier.fish"
 
 abbr -a asrc "source ~/.config/fish/config.fish"
 
@@ -146,8 +145,11 @@ alias n nvim
 abbr -a yz yazi
 # read Markdown in the terminal, astronaut colours, scrollable (q to quit)
 alias md "glow -p" # style from ~/.config/glow/glow.yml
-# open Claude with the JERY assistant skill
-alias jery "claude /jery-assistant"
+# open JERY — личный ассистент Гамида в Kimi Code
+# стартует в хранилище MainStorage: JERY-инструкции подхватываются автоматически,
+# скилл jery-assistant доступен как /skill:jery-assistant
+# (с 17.11.2026; раньше: alias jery "claude /jery-assistant")
+alias jery 'cd "/Users/uzalovgamid/Documents/MainStorage"; and kimi'
 
 bind ctrl-\\ 'status test-terminal-feature scroll-content-up && commandline -f scrollback-push; commandline -f clear-screen'
 bind -M insert ctrl-\\ 'status test-terminal-feature scroll-content-up && commandline -f scrollback-push; commandline -f clear-screen'
@@ -183,3 +185,6 @@ Dirs:
 end
 
 set -gx VIRTUAL_ENV_DISABLE_PROMPT 1
+
+# kimi-code
+fish_add_path -g "/Users/uzalovgamid/.kimi-code/bin"

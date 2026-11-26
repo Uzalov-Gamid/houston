@@ -1,15 +1,10 @@
--- "palette": a tiny colour scheme in the "astronaut" colours — picked from
--- the desktop wallpaper (orange background, cream fur, dark visor, steel
--- helmet) plus the aqua-blue window glow. Same palette as the Ghostty
--- theme (ghostty/themes/astronaut). No plugin — just highlight groups.
--- The background is left to the terminal, so Neovim blends in with it.
---
--- To change a colour: edit `c` below, then `:colorscheme palette`.
+-- MainStorage Astronaut colours. Normal and NormalNC inherit the terminal
+-- background, and Neovim selects dark or light based on 'background'.
 
 vim.cmd("highlight clear")
 vim.g.colors_name = "palette"
 -- Dark or light is picked from 'background', which Neovim detects from
--- the terminal's background colour (Ghostty astronaut / astronaut-light).
+-- the terminal's background colour (Ghostty Facade or another theme).
 local light = vim.o.background == "light"
 
 -- Light = palette/astronaut-light.json, roles as in the Obsidian theme
@@ -46,14 +41,14 @@ local c = light and {
   card_sel = "#3b2c26",
 } or {
   fg = "#e3dccb",      -- cream fur: main text
-  grey = "#8f857a",    -- warm steel: comments
+  grey = "#a9998b",    -- readable comments over translucent wallpaper
   dim = "#6b5a50",     -- line numbers, borders
   bg0 = "#1c1513",     -- terminal background (text on the pills)
   bg1 = "#2a1f1b",     -- current line, status line, popups
   bg2 = "#3b2c26",     -- selection
   faint = "#463731",   -- indent guides: barely visible
   orange = "#ef8f4c",  -- wallpaper background: spot accent
-  red = "#e0603a",     -- arrow on the helmet
+  red = "#e4836a",     -- clay
   yellow = "#e5c15a",  -- "YORK" sticker
   green = "#b5b07a",   -- olive jacket
   blue = "#7daea3",    -- window glow / bar accent: the main colour
@@ -68,10 +63,10 @@ local c = light and {
   mint = "#24332e",
   peach = "#4a3324",
   butter = "#4f421c",
-  select = "#3b2c26",
-  card = "#2a1f1b",
+  select = "#334741",
+  card = "#221a17",
   card_fg = "#e3dccb",
-  card_sel = "#463731",
+  card_sel = "#503627",
 }
 
 local hl = function(group, spec)
@@ -80,24 +75,26 @@ end
 
 -- ── Editor UI ────────────────────────────────────────────────────────
 hl("Normal", { fg = c.fg })                -- no bg: use the terminal's
-hl("NormalFloat", { fg = c.fg })                  -- floating windows: transparent
+hl("NormalNC", { fg = c.fg }) -- unfocused splits also use terminal transparency
+local float_bg = light and c.bg1 or c.card
+hl("NormalFloat", { fg = c.fg, bg = float_bg })
 hl("MsgArea", { fg = c.fg })                      -- cmdline box & messages: transparent
-hl("FloatBorder", { fg = c.glow })                -- rounded borders: the aqua window glow
-hl("FloatTitle", { fg = c.orange, bold = true })  -- title in the top border
-hl("FloatFooter", { fg = c.dim })                 -- key hints in the bottom border
+hl("FloatBorder", { fg = c.tan, bg = float_bg })
+hl("FloatTitle", { fg = c.orange, bg = float_bg, bold = true })
+hl("FloatFooter", { fg = c.grey, bg = float_bg })
 -- path above the code: project › src › file (init.lua builds it)
-hl("WinBar", { fg = c.dim })
-hl("WinBarNC", { fg = c.dim })
-hl("WinBarSep", { fg = c.faint })
-hl("WinBarFile", { fg = c.fg })
+hl("WinBar", { fg = c.grey, bg = c.bg1 })
+hl("WinBarNC", { fg = c.grey, bg = c.bg1 })
+hl("WinBarSep", { fg = c.tan })
+hl("WinBarFile", { fg = c.bold, bold = true })
 hl("WinBarModified", { fg = c.orange })
 -- the "file written" message
 hl("MsgSaved", { fg = c.green })
 hl("MsgSavedFile", { fg = c.fg })
 hl("MsgSavedInfo", { fg = c.dim })
-hl("CursorLine", { bg = c.bg1 })
+hl("CursorLine", { bg = light and c.bg1 or "#32251e" })
 hl("CursorLineNr", { fg = c.orange, bold = true })
-hl("LineNr", { fg = c.dim })
+hl("LineNr", { fg = light and c.dim or "#9a8676" })
 hl("SignColumn", {})
 hl("ColorColumn", { bg = c.bg1 })
 hl("WinSeparator", { fg = c.dim })
@@ -113,14 +110,14 @@ hl("EndOfBuffer", { fg = c.bg1 })
 hl("Pmenu", { fg = c.card_fg, bg = c.card })
 hl("PmenuSel", { fg = c.card_fg, bg = c.card_sel, bold = true })
 hl("PmenuKind", { fg = c.glow, bg = c.card })
-hl("PmenuExtra", { fg = c.dim, bg = c.card })
+hl("PmenuExtra", { fg = light and "#a9998b" or c.grey, bg = c.card })
 hl("PmenuSbar", { bg = c.card })
 hl("PmenuThumb", { bg = c.dim })
-hl("StatusLine", { fg = c.fg })    -- transparent: the pills carry the colour
-hl("StatusLineNC", { fg = c.grey })
-hl("TabLine", { fg = c.grey, bg = c.bg1 })
+hl("StatusLine", { fg = c.fg, bg = c.bg1 })
+hl("StatusLineNC", { fg = c.grey, bg = c.bg1 })
+hl("TabLine", { fg = c.grey })
 hl("TabLineSel", { fg = c.fg, bold = true })
-hl("TabLineFill", { bg = c.bg1 })
+hl("TabLineFill", {})
 hl("Title", { fg = c.orange, bold = true })
 hl("Directory", { fg = c.blue })
 hl("Folded", { fg = c.grey, bg = c.bg1 })
@@ -129,36 +126,31 @@ hl("WarningMsg", { fg = c.yellow })
 hl("MoreMsg", { fg = c.green })
 hl("Question", { fg = c.blue })
 
--- status line mode pill (used by the statusline in init.lua)
--- status line pills, same look as the tmux bar (init.lua builds the line).
--- Each pill = body group + "Cap" group for the rounded ends.
-local pills = {
-  StMode = { c.blue, c.bg0 },        -- NORMAL (like the tmux session)
-  StModeInsert = { c.orange, c.bg0 },
-  StModeVisual = { c.yellow, c.bg0 },
-  StModeCommand = { c.green, c.bg0 },
-  StFile = { c.bg2, c.fg },               -- file name (like the current window)
-  StInfo = { c.bg1, c.grey },             -- filetype, position
-}
-for name, p in pairs(pills) do
-  hl(name, { fg = p[2], bg = p[1], bold = name:match("^StMode") ~= nil })
-  hl(name .. "Cap", { fg = p[1] })
+-- A coloured mode marker on the same surface as the status line.
+for name, color in pairs({
+  StMode = light and c.peach or "#e3b590",
+  StModeInsert = light and c.mint or c.pine,
+  StModeVisual = light and c.butter or c.yellow,
+  StModeCommand = light and c.bg2 or c.steel,
+}) do
+  hl(name, { fg = light and c.fg or c.bg0, bg = color, bold = true })
 end
-hl("StModified", { fg = c.orange, bg = c.bg2 })
--- file icons inside the file pill: tree colours on the pill background
+hl("StFile", { fg = c.bold, bold = true })
+hl("StInfo", { fg = c.grey })
+hl("StModified", { fg = c.orange })
 for icon_name, color in pairs({ Blue = c.blue, Steel = c.steel, Yellow = c.yellow,
   Orange = c.orange, Green = c.green, Tan = c.tan, Fg = c.fg, Grey = c.grey, Dir = c.blue }) do
-  hl("StIcon" .. icon_name, { fg = color, bg = c.bg2 })
+  hl("StIcon" .. icon_name, { fg = color })
 end
 
 -- project tree (lua/tree.lua): a slightly darker side panel
-hl("TreeNormal", { fg = c.fg })                   -- transparent, like the editor
-hl("TreeCursorLine", { bg = c.bg1 })
-hl("TreeRoot", { fg = c.orange })
-hl("TreeDir", { fg = c.blue })                     -- one weight everywhere: colour, not bold
+hl("TreeNormal", { fg = c.fg, bg = light and c.bg1 or c.card })
+hl("TreeCursorLine", { bg = light and c.peach or c.card_sel })
+hl("TreeRoot", { fg = c.orange, bold = true })
+hl("TreeDir", { fg = c.tan })
 hl("TreeFile", { fg = c.fg })
 hl("TreeHidden", { fg = c.grey })
-hl("TreeCurrent", { fg = c.orange })
+hl("TreeCurrent", { fg = c.orange, bold = true })
 hl("TreeGuide", { fg = c.faint })
 hl("TreeIconDir", { fg = c.blue })              -- closed folder: emerald
 hl("TreeIconDirOpen", { fg = c.orange })         -- open folder: ember, as in Obsidian
@@ -190,26 +182,29 @@ hl("DashGh3", { fg = "#d97a3e" })
 hl("DashGh4", { fg = c.orange })
 
 -- ── Syntax ───────────────────────────────────────────────────────────
-hl("Comment", { fg = c.grey, italic = true })
-hl("String", { fg = c.green })
-hl("Character", { fg = c.green })
+-- as Claude Code draws code in the chat (Gamid, 11.11.2026): keywords and
+-- types (int, void, return, #include) emerald and bold, functions mustard,
+-- comments olive and upright
+hl("Comment", { fg = light and c.green or c.grey })
+hl("String", { fg = light and c.tan or c.green })
+hl("Character", { link = "String" })
 hl("Number", { fg = c.orange })
 hl("Boolean", { fg = c.orange, bold = true })
 hl("Float", { fg = c.orange })
 hl("Constant", { fg = c.orange })
 hl("Identifier", { fg = c.fg })
 hl("Function", { fg = c.yellow })
-hl("Statement", { fg = c.blue })
-hl("Keyword", { fg = c.blue })
-hl("Conditional", { fg = c.blue })
-hl("Repeat", { fg = c.blue })
+hl("Statement", { fg = c.blue, bold = true })
+hl("Keyword", { fg = c.blue, bold = true })
+hl("Conditional", { fg = c.blue, bold = true })
+hl("Repeat", { fg = c.blue, bold = true })
 hl("Exception", { fg = c.red })
-hl("Operator", { fg = c.sky })
+hl("Operator", { fg = light and c.sky or c.pine })
 hl("PreProc", { fg = c.steel })
-hl("Include", { fg = c.blue })
-hl("Type", { fg = c.steel })
+hl("Include", { fg = c.blue, bold = true })
+hl("Type", { fg = c.blue, bold = true })
 hl("Special", { fg = c.red })
-hl("Delimiter", { fg = c.dim })
+hl("Delimiter", { fg = light and c.dim or "#a18f80" })
 hl("Todo", { fg = c.fg, bg = c.butter, bold = true })
 hl("Error", { fg = c.red })
 hl("Underlined", { underline = true })
@@ -226,9 +221,9 @@ hl("@module", { fg = c.steel })
 hl("@function.builtin", { fg = c.yellow, italic = true })
 hl("@function.method", { fg = c.yellow })
 hl("@constructor", { fg = c.steel })
-hl("@keyword.function", { fg = c.blue, italic = true })
+hl("@keyword.function", { fg = c.blue, bold = true })
 hl("@keyword.return", { fg = c.blue, bold = true })
-hl("@type.builtin", { fg = c.steel, italic = true })
+hl("@type.builtin", { fg = c.blue, bold = true })
 hl("@tag", { fg = c.blue })
 hl("@tag.attribute", { fg = c.gold })
 hl("@tag.delimiter", { fg = c.grey })
@@ -414,8 +409,8 @@ hl("WhichKeyGroup", { fg = c.blue })
 hl("WhichKeyDesc", { fg = c.fg })
 hl("WhichKeySeparator", { fg = c.faint })
 hl("WhichKeyValue", { fg = c.dim })
-hl("WhichKeyNormal", { fg = c.fg })
-hl("WhichKeyBorder", { fg = c.glow })
+hl("WhichKeyNormal", { link = "NormalFloat" })
+hl("WhichKeyBorder", { link = "FloatBorder" })
 hl("WhichKeyTitle", { fg = c.orange, bold = true })
 
 -- dadbod-ui: databases emerald like folders, tables ink
@@ -430,11 +425,11 @@ hl("dbui_help", { fg = c.dim })
 -- the terminal inside Neovim (lazydocker, harlequin, :terminal): the
 -- Ghostty palette, so programs look the same in and out of the editor
 local ansi = light and {
-  "#2a1f1b", "#b0381a", "#5d6a1c", "#765500", "#2f64a0", "#87562f", "#1f6b5c", "#56616b",
+  "#2a1f1b", "#b0381a", "#5d6a1c", "#765500", "#2f64a0", "#87562f", "#1f6b5c", "#d6c8ab",
   "#6e6155", "#b4541b", "#134b40", "#8c6a12", "#1e3a5f", "#3b2c26", "#24578f", "#8f8276",
 } or {
-  "#1c1513", "#e0603a", "#b5b07a", "#e5c15a", "#8aa1b8", "#d0a07e", "#7daea3", "#e3dccb",
-  "#6b5a50", "#ef8f4c", "#c9c48e", "#f0d27a", "#a8bccf", "#e0b896", "#98c4ba", "#f1ead8",
+  "#1c1513", "#e4836a", "#b5b07a", "#e5c15a", "#8aa1b8", "#d0a07e", "#7daea3", "#e3dccb",
+  "#a9998b", "#ef8f4c", "#c9c48e", "#f0d27a", "#a8bccf", "#e0b896", "#98c4ba", "#f1ead8",
 }
 for i, color in ipairs(ansi) do
   vim.g["terminal_color_" .. (i - 1)] = color

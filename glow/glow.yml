@@ -1,6 +1,6 @@
 # style name or JSON path (default "auto")
-# light terminal (Ghostty astronaut-light); dark: ~/.config/glow/astronaut.json
-style: "~/.config/glow/astronaut-light.json"
+# MainStorage Astronaut code-block colours.
+style: "~/.config/glow/astronaut.json"
 # mouse support (TUI-mode only)
 mouse: false
 # use pager to display markdown

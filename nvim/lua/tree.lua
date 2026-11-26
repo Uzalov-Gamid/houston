@@ -13,12 +13,12 @@ local M = {}
 local api, uv = vim.api, vim.uv
 local ns = api.nvim_create_namespace("tree")
 
-local WIDTH = 32
+local WIDTH = 30
 local NEVER_SHOW = { [".git"] = true, [".DS_Store"] = true, ["__pycache__"] = true, ["node_modules"] = true }
 
 -- Nerd Font icons (Ghostty has them built in) + the highlight group of each.
 local ICON = {
-  dir = "\u{f07b}", dir_open = "\u{f07c}", file = "\u{f016}",
+  file = "\u{f016}",
 }
 local BY_EXT = {
   py = { "\u{e606}", "TreeIconYellow" },
@@ -58,12 +58,6 @@ local state = {
 }
 
 local function icon_for(item)
-  if item.dir then
-    if state.open[item.path] then
-      return ICON.dir_open, "TreeIconDirOpen"
-    end
-    return ICON.dir, "TreeIconDir"
-  end
   local by_name = BY_NAME[item.name] or (item.name:match("^Dockerfile") and BY_NAME.Dockerfile)
   local spec = by_name or BY_EXT[(item.name:match("%.([^.]+)$") or ""):lower()]
   if spec then
@@ -121,7 +115,7 @@ local function render()
   end
 
   -- header: project name
-  local title = " " .. ICON.dir_open .. " " .. vim.fn.fnamemodify(state.root, ":t")
+  local title = "  " .. vim.fn.fnamemodify(state.root, ":t")
   lines[1] = title
   mark(0, 0, #title, "TreeRoot")
   lines[2] = ""
@@ -130,7 +124,9 @@ local function render()
     for _, item in ipairs(scan(dir)) do
       item.depth = depth
       local guide = string.rep("│ ", depth)
-      local icon, icon_hl = icon_for(item)
+      local expanded = item.dir and state.open[item.path]
+      local icon = item.dir and (expanded and "▾" or "▸") or "·"
+      local icon_hl = expanded and "TreeIconDirOpen" or "TreeGuide"
       local line = "  " .. guide .. icon .. " " .. item.name
       table.insert(lines, line)
       local row = #lines - 1
@@ -147,7 +143,7 @@ local function render()
       end
       mark(row, col, #item.name, name_hl)
 
-      if item.dir and state.open[item.path] then
+      if expanded then
         walk(item.path, depth + 1)
       end
     end
@@ -350,7 +346,7 @@ local function setup_window()
   wo.cursorcolumn = false
   wo.colorcolumn = ""
   wo.winfixwidth = true
-  wo.winhighlight = "Normal:TreeNormal,CursorLine:TreeCursorLine"
+  wo.winhighlight = "Normal:TreeNormal,NormalNC:TreeNormal,CursorLine:TreeCursorLine"
   wo.fillchars = "eob: " -- no ~ under the last entry
 end
 

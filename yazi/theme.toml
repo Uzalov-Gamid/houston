@@ -1,0 +1,105 @@
+# MainStorage Astronaut code-block colours.
+# File types are coloured like the Obsidian file tree ([filetype] at the end):
+# folders emerald, pictures tan, audio/video gold, PDF rust, archives ember.
+
+[mgr]
+cwd = { fg = "#98c4ba", bold = true }
+
+find_keyword  = { fg = "#e4836a", bold = true, underline = true }
+find_position = { fg = "#d0a07e", bold = true, italic = true }
+
+marker_copied   = { fg = "#b5b07a", bg = "#465037" }
+marker_cut      = { fg = "#e4836a", bg = "#6a362b" }
+marker_marked   = { fg = "#8aa1b8", bg = "#45606f" }
+marker_selected = { fg = "#ef8f4c", bg = "#6b4936" }
+
+count_copied   = { fg = "#f1ead8", bg = "#465037" }
+count_cut      = { fg = "#f1ead8", bg = "#6a362b" }
+count_selected = { fg = "#f1ead8", bg = "#6b4936" }
+
+border_style = { fg = "#756154" }
+
+[tabs]
+active   = { fg = "#f1ead8", bg = "#6b4936", bold = true }
+inactive = { fg = "#d6c8ab", bg = "#342923" }
+
+[mode]
+normal_main = { fg = "#f1ead8", bg = "#6b4936", bold = true }
+normal_alt  = { fg = "#ef8f4c", bg = "#342923" }
+select_main = { fg = "#f1ead8", bg = "#37574c", bold = true }
+select_alt  = { fg = "#98c4ba", bg = "#342923" }
+unset_main  = { fg = "#f1ead8", bg = "#6a362b", bold = true }
+unset_alt   = { fg = "#e4836a", bg = "#342923" }
+
+[indicator]
+parent  = { fg = "#e3dccb", bg = "#342923" }
+current = { fg = "#e3dccb", bg = "#493327", bold = true }  # peach, like the active file in Obsidian
+preview = { underline = true }
+
+[status]
+perm_sep   = { fg = "#a9998b" }
+perm_type  = { fg = "#98c4ba" }
+perm_read  = { fg = "#e5c15a" }
+perm_write = { fg = "#e4836a" }
+perm_exec  = { fg = "#8aa1b8" }
+
+progress_label  = { fg = "#e3dccb", bold = true }
+progress_normal = { fg = "#ef8f4c", bg = "#342923" }
+progress_error  = { fg = "#f1ead8", bg = "#6a362b" }
+
+[which]
+border          = { fg = "#756154" }
+cand            = { fg = "#ef8f4c", bold = true }
+rest            = { fg = "#a9998b" }
+desc            = { fg = "#98c4ba" }
+separator_style = { fg = "#a9998b" }
+
+[confirm]
+border  = { fg = "#ef8f4c" }
+title   = { fg = "#ef8f4c", bold = true }
+btn_yes = { fg = "#f1ead8", bg = "#6b4936" }
+
+[spot]
+border   = { fg = "#756154" }
+title    = { fg = "#ef8f4c" }
+tbl_col  = { fg = "#98c4ba" }
+tbl_cell = { fg = "#e3dccb", bg = "#392f27" }
+
+[notify]
+title_info  = { fg = "#98c4ba" }
+title_warn  = { fg = "#e5c15a" }
+title_error = { fg = "#e4836a" }
+
+[pick]
+border = { fg = "#756154" }
+active = { fg = "#ef8f4c", bold = true }
+
+[input]
+border   = { fg = "#ef8f4c" }
+selected = { bg = "#493327" }
+
+[cmp]
+border = { fg = "#756154" }
+active = { fg = "#e3dccb", bg = "#493327" }
+
+[tasks]
+border  = { fg = "#756154" }
+hovered = { fg = "#ef8f4c", bold = true }
+
+[help]
+border  = { fg = "#756154" }
+chord   = { fg = "#98c4ba" }
+hovered = { fg = "#e3dccb", bg = "#493327", bold = true }
+
+[filetype]
+rules = [
+  { mime = "image/*", fg = "#d0a07e" },
+  { mime = "{audio,video}/*", fg = "#e5c15a" },
+  { mime = "application/pdf", fg = "#e4836a" },
+  { mime = "application/{zip,gzip,x-tar,x-bzip2,x-7z-compressed,x-rar,x-xz,zstd}", fg = "#ef8f4c" },
+  { url = "*", is = "orphan", fg = "#e4836a", underline = true },
+  { url = "*", is = "link", fg = "#a8bccf" },
+  { url = "*", is = "exec", fg = "#b5b07a" },
+  { url = "*/", fg = "#98c4ba", bold = true },
+  { url = "*", fg = "#e3dccb" },
+]

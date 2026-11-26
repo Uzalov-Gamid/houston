@@ -1,6 +1,4 @@
 #!/bin/bash
-# Run by AeroSpace on every focus change (on-focus-changed in aerospace.toml):
-# when the focused window is Ghostty, switch the keyboard to English (ABC).
-# Switching back to Russian inside Ghostty works as usual until the next focus change.
-[ "$(/opt/homebrew/bin/aerospace list-windows --focused --format '%{app-bundle-id}')" = "com.mitchellh.ghostty" ] || exit 0
-exec "$HOME/.local/bin/input-source" com.apple.keylayout.ABC
+# Ignore empty workspaces and resolve the focused window without querying AeroSpace.
+[ -n "${AEROSPACE_WINDOW_ID:-}" ] || exit 0
+exec "$HOME/.local/bin/input-source" --ghostty-window "$AEROSPACE_WINDOW_ID"
